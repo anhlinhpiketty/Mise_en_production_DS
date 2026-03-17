@@ -31,7 +31,7 @@ Personnelement (Colas), j'ai travaillé sur la partie classification LLM donc il
 Quelques indications :
 - llm_augment_data.py --> Script pour générer des données supplémentaires pour l'entrainement du modèle NER
 - train_spacy.py --> Une partie du script pour entrainer le modèle NER Spacy
-- spacy_infer.py --> inférence du modèle NER sur Jocas
+- spacy_infer.py --> inférence du modèle NER sur Jocas (extraction de la compéte)
 - skill_normalizer.py --> du code qui normalise les compétences extraites avec le modèle NER pour réduire le volume (pas forcement utile pour notre projet qui classifie on-the-fly)
 - llm_infer.py --> script un peu standardisé de classification (utilisable avec différents prompts)
 - setup_logging.py et utils.py --> différentes fonctions utilitaires pas toutes utiles pour notre projet
@@ -42,3 +42,15 @@ Dans /outputs --> un partie des compétences extraites de Jocas classifiées sel
 
 Dans /config_infer_llm --> un fichier de config exemple pour 
 
+
+### Plan d'attaque
+
+1. Entrainement du NER (MLFlow)
+3. Classification LLM
+4. Deploiement de l'API de la pipeline complète 
+5. Déploiement d'une interface graphique
+
+
+### Free-LLM :
+
+https://github.com/O-LLM/Free-LLM
