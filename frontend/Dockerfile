@@ -12,8 +12,9 @@ ENV PATH="/root/.local/bin/:$PATH"
 WORKDIR /app
 
 # Installation
+# NB : je crois que lino veuille pas qu'on utilise requireemtns donc à reregarder
 COPY requirements.txt .
-RUN uv pip install --system -r requirements.txt
+RUN uv pip install --system -r requirements.txt 
 
 # Copie de l'app
 COPY app.py .

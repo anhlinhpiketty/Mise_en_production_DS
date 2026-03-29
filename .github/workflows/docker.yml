@@ -24,4 +24,4 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/skillscan:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/skillscan:latest # changer nom de l'image docker 
