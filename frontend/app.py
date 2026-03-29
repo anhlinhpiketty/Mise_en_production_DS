@@ -45,7 +45,6 @@ h1, h2, h3 {
 /* Bandeaux parachute */
 .bandeau-parachute {
     background: #fffbeb;
-    border: 1px solid #fbbf24;
     border-radius: 12px;
     padding: 1rem 1.2rem;
     margin-bottom: 1.2rem;
@@ -55,7 +54,6 @@ h1, h2, h3 {
 
 .bandeau-indispo {
     background: #fef2f2;
-    border: 1px solid #ef4444;
     border-radius: 12px;
     padding: 1rem 1.2rem;
     margin-bottom: 1.2rem;
@@ -146,6 +144,11 @@ h1, h2, h3 {
     margin: 1.5rem 0;
 }
 
+/* Zone de texte */
+.stTextArea > div:focus-within {
+    border-color: #1d4ed8;
+}
+
 /* Bouton Analyse*/
 .stButton > button {
     background-color: #3b82f6;  
@@ -157,6 +160,7 @@ h1, h2, h3 {
     background-color: #1d4ed8;  
     color: white;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -186,14 +190,14 @@ COMPETENCES_MOCK = [
     {"label": "Gestion de projet",    "categorie": "Soft Skill",               "details": None},
     {"label": "Rédaction de rapports","categorie": "Compétence non numérique", "details": None},
     {"label": "Finance de marché",    "categorie": "Domaine / Secteur",        "details": None},
-    {"label": "AWS Certified Solutions Architect", "categorie": "Certification / Formation", "details": None},
+    {"label": "Whatever diploma", "categorie": "Certification / Formation", "details": None},
 ]
 
 # Changer cette valeur pour tester les différents scénarios :
 # "ok" : API répond normalement
 # "lent" : API dépasse le timeout
 # "indisponible" : LLMLab down
-SCENARIO_MOCK = "ok"
+SCENARIO_MOCK = "lent"
 
 # API principale où on utilise le "bon" LLM 
 def mock_api_principale(texte_offre: str) -> dict:
@@ -311,6 +315,17 @@ def render_bandeau(mode: str):
         </div>
         """, unsafe_allow_html=True)
 
+def afficher_resultats(resultat: dict, mode: str):
+    """Affiche le bandeau + les compétences détectées."""
+    competences = resultat.get("competences", [])
+    total       = len(competences)
+    st.markdown("<hr class='section-sep'>", unsafe_allow_html=True)
+    if mode != "ok":
+        render_bandeau(mode)
+    st.markdown(f"### {total} compétence{'s' if total > 1 else ''} détectée{'s' if total > 1 else ''}")
+    render_resultats(competences)
+
+
 # INTERFACE ----------------------------------------------------------------------
 
 st.markdown('<p class="main-title">I have no name idea</p>', unsafe_allow_html=True)
@@ -319,49 +334,85 @@ st.markdown('<p class="subtitle">Diagnostic des compétences d\'une offre d\'emp
 offre = st.text_area(
     "Collez votre offre d'emploi ici",
     height=220,
-    placeholder="Ex : Nous recherchons un Data Scientist maîtrisant la checklist des bonnes pratiques de développement, avec des bonnes capacités de communications..."
+    placeholder="Ex : Nous recherchons un Data Scientist maîtrisant Python et SQL, avec des bonnes capacités de communications..."
 )
 
 col1, col2, col3 = st.columns([2, 1, 2])
 with col2:
     analyser = st.button("Analyser →", use_container_width=True, type="primary")
 
+
+# On utilise st.session_state pour mémoriser l'état entre deux exécutions du script.
+# Streamlit réexécute tout le fichier à chaque interaction (clic, saisie...),
+# donc sans session_state, on perdrait l'information d'un tour à l'autre.
+#
+# États possibles dans session_state :
+#   "attente_choix" (bool) : True quand on attend que l'utilisateur choisisse
+#   "offre_en_cours" (str) : l'offre mémorisée pendant qu'on attend le choix
+#   "resultat" (dict)      :  résultat final à afficher
+#   "mode" (str)           : "ok" | "parachute_timeout" | "parachute_indispo"
+
+# Initialisation des variables de session si elles n'existent pas encore
+if "attente_choix" not in st.session_state:
+    st.session_state["attente_choix"] = False
+if "resultat" not in st.session_state:
+    st.session_state["resultat"] = None
+if "mode" not in st.session_state:
+    st.session_state["mode"] = "ok"
+ 
+# Quand on clique sur "Analyser"
 if analyser:
     if not offre.strip():
         st.warning("Merci de coller une offre d'emploi avant d'analyser.")
     else:
-        resultat = None
-        mode = "ok" 
-        
-        # --- Tentative API principale ---
+        # On remet l'état à zéro pour une nouvelle analyse
+        st.session_state["resultat"]     = None
+        st.session_state["attente_choix"] = False
+        st.session_state["mode"]         = "ok"
+ 
         try:
             with st.spinner("Analyse avec le modèle principal..."):
-                debut = time.time()
+                debut    = time.time()
                 resultat = mock_api_principale(offre)
-                duree = time.time() - debut
-
-                # --- Vérification si trop lent ---
-                if duree > TIMEOUT_SECONDES:
-                    st.toast("Trop long : passage au modèle de secours")
-                    mode = "parachute_timeout"
-                    resultat = mock_api_parachute(offre)
-
+                duree    = time.time() - debut
+ 
+            if duree > TIMEOUT_SECONDES:
+                # Trop lent : on mémorise l'offre et on passe en mode "attente choix"
+                st.session_state["attente_choix"]  = True
+                st.session_state["offre_en_cours"] = offre
+            else:
+                # OK : on mémorise le résultat directement
+                st.session_state["resultat"] = resultat
+                st.session_state["mode"]     = "ok"
+ 
         except ConnectionError:
-            # --- Gestion si LLM indispo ---
+            # Indisponible donc parachute automatique
             st.toast("Indisponible : passage au modèle de secours")
-            mode = "parachute_indispo"
-            resultat = mock_api_parachute(offre)
+            with st.spinner("Basculement sur le modèle de secours..."):
+                st.session_state["resultat"] = mock_api_parachute(offre)
+                st.session_state["mode"]     = "parachute_indispo"
+ 
+# Pop-up de choix si on est en attente 
+if st.session_state["attente_choix"]:
+    st.warning(f"L'analyse prend plus de {TIMEOUT_SECONDES} secondes.")
+    col_a, col_b = st.columns([1, 1])
+    _, col_a, col_b, _ = st.columns([1, 1, 1, 1])
+    spinner_placeholder = st.empty() 
 
-        # --- Affichage des résultats ---
-        if resultat:
-            competences = resultat.get("competences", [])
-            total = len(competences)
-
-            st.markdown("<hr class='section-sep'>", unsafe_allow_html=True)
-            
-            # Affiche le bandeau si on n'est pas en mode "ok"
-            if mode != "ok":
-                render_bandeau(mode)
-                
-            st.markdown(f"### {total} compétence{'s' if total > 1 else ''} détectée{'s' if total > 1 else ''}")
-            render_resultats(competences)
+    with col_a:
+        if st.button("Continuer à attendre"):
+            with spinner_placeholder, st.spinner("En attente de l'API principale..."):
+                st.session_state["resultat"]      = mock_api_principale(st.session_state["offre_en_cours"])
+                st.session_state["mode"]          = "ok"
+                st.session_state["attente_choix"] = False
+ 
+    with col_b:
+        if st.button("Utiliser un modèle de secours"):
+            with spinner_placeholder, st.spinner("Basculement sur le modèle de secours..."):
+                st.session_state["resultat"]      = mock_api_parachute(st.session_state["offre_en_cours"])
+                st.session_state["mode"]          = "parachute_timeout"
+                st.session_state["attente_choix"] = False
+ 
+# Affichage du résultat final 
+if st.session_state["resultat"]:
+    afficher_resultats(st.session_state["resultat"], st.session_state["mode"])
