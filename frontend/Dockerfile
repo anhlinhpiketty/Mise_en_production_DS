@@ -13,8 +13,8 @@ WORKDIR /app
 
 # Installation
 # NB : je crois que lino veuille pas qu'on utilise requireemtns donc à reregarder
-COPY requirements.txt .
-RUN uv pip install --system -r requirements.txt 
+COPY pyproject.toml .
+RUN uv sync 
 
 # Copie de l'app
 COPY app.py .
@@ -23,4 +23,4 @@ COPY app.py .
 EXPOSE 8501
 
 # Lancement
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["uv", "run", "streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]

@@ -3,7 +3,7 @@ name: Build and push Docker image
 on:
   push:
     branches:
-      - anhlinh  # à changer mais c'est parce que je bosse sur ma branche
+      - anhlinh  
 
 jobs:
   build:
@@ -22,6 +22,7 @@ jobs:
       - name: Build et push de l'image
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: .                       
+          file: ./frontend/Dockerfile      
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/skillscan:latest # changer nom de l'image docker 
