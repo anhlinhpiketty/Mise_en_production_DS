@@ -10,9 +10,7 @@ ENV PATH="/root/.local/bin/:$PATH"
 
 # Install project dependencies
 COPY pyproject.toml .
+COPY app ./app
 RUN uv sync
 
-COPY train.py .
-COPY src ./src
 CMD ["bash", "-c", "./app/run.sh"]
-COPY app ./app
