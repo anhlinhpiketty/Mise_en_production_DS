@@ -12,22 +12,23 @@ from typing import List, Dict, Optional, Any
 import os
 import duckdb
 from bs4 import BeautifulSoup
+import s3fs
 
 # Import local
 import llm
 
+S3_PATH = os.environ['S3_PATH']
 # Chemins relatifs (à changer)
-BASE_PATH = 's3://colaslepoutre/Classification_compétences_jocas'
-PROMPT_NUM = 's3://colaslepoutre/Classification_compétences_jocas/prompt_num.txt'
-PROMPT_THEME = 's3://colaslepoutre/Classification_compétences_jocas/prompt_thematique.txt'
-PROMPT_NIV = 's3://colaslepoutre/Classification_compétences_jocas/prompt_niv.txt'
-PROMPT_IA = 's3://colaslepoutre/Classification_compétences_jocas/prompt_class_ia.txt'
+PROMPT_NUM = S3_PATH+'/prompt_num.txt'
+PROMPT_THEME = S3_PATH+'/prompt_thematique.txt'
+PROMPT_NIV = S3_PATH+'/prompt_niv.txt'
+PROMPT_IA = S3_PATH+'/prompt_class_ia.txt'
 
-HISTORY_NORMALIZED = 's3://colaslepoutre/Classification_compétences_jocas/competences_jocas_2019_to_2025_normalized.csv'
-HISTORY_NUM = 's3://colaslepoutre/Classification_compétences_jocas/num_competences_jocas_2019_to_2025.csv'
-HISTORY_THEME = 's3://colaslepoutre/Classification_compétences_jocas/thematique_num_competences_jocas_2019_to_2025.csv'
-HISTORY_NIV = 's3://colaslepoutre/Classification_compétences_jocas/niv_num_competences_jocas_2019_to_2025.csv'
-HISTORY_IA = 's3://colaslepoutre/Classification_compétences_jocas/ia_num_competences_jocas_2019_to_2025.csv'
+HISTORY_NORMALIZED = S3_PATH+'/competences_jocas_2019_to_2025_normalized.csv'
+HISTORY_NUM = S3_PATH+'/num_competences_jocas_2019_to_2025.csv'
+HISTORY_THEME = S3_PATH+'/thematique_num_competences_jocas_2019_to_2025.csv'
+HISTORY_NIV = S3_PATH+'/niv_num_competences_jocas_2019_to_2025.csv'
+HISTORY_IA = S3_PATH+'/ia_num_competences_jocas_2019_to_2025.csv'
 
 # Variable globale pour la connexion DuckDB
 _DUCKDB_CONNECTION = None
@@ -44,8 +45,13 @@ def _get_classif_history_connection() -> duckdb.DuckDBPyConnection:
 
 def read_txt(path: str) -> str:
     """Lit et retourne le contenu d'un fichier texte."""
-    with open(path, 'r', encoding='utf-8') as f:
-        return f.read()
+    fs = s3fs.S3FileSystem(
+        client_kwargs={'endpoint_url': 'https://'+'minio.lab.sspcloud.fr'},
+        key = os.environ["AWS_ACCESS_KEY_ID"], 
+        secret = os.environ["AWS_SECRET_ACCESS_KEY"], 
+        token = os.environ["AWS_SESSION_TOKEN"])
+    with fs.open(path) as f:
+        return f.read().decode('utf-8')
 
 def normalize(text: str) -> str:
     """
