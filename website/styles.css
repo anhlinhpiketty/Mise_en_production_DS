@@ -1,0 +1,249 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
+
+/* ── Base ── */
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: #1a1a2e;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  font-family: 'DM Serif Display', serif;
+  font-weight: 400;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #1a1a2e;
+}
+
+/* ── Navbar ── */
+.navbar {
+  background-color: white !important;
+  border-bottom: 1px solid #e5e7eb;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.navbar-brand, .nav-link {
+  color: #1a1a2e !important;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: #3b82f6 !important;
+}
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  color: white;
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.hero-tag {
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #93c5fd;
+  margin-bottom: 1rem;
+}
+
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3.5rem;
+  font-weight: 400;
+  margin: 0.5rem 0;
+  color: white;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  max-width: 520px;
+  margin: 1rem auto 2rem;
+  line-height: 1.7;
+}
+
+/* ── Bouton ── */
+.btn-primary {
+  display: inline-block;
+  background-color: #3b82f6;
+  color: white !important;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  text-decoration: none !important;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+/* ── Sections ── */
+.section {
+  padding: 4rem 2rem;
+}
+
+.section-alt {
+  background-color: #f8f9ff;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── Cards ── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.card-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem;
+  color: #1a1a2e;
+}
+
+.card p, .card ul {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.card ul {
+  padding-left: 1.2rem;
+}
+
+/* ── Steps ── */
+.steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.step {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 220px;
+  text-align: center;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+}
+
+.step p {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.step-arrow {
+  font-size: 1.5rem;
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+/* ── Team ── */
+.team {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.team-member {
+  background: #f8f9ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.team-member strong {
+  color: #1a1a2e;
+  font-size: 1rem;
+}
+
+.team-member span {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+/* ── Page architecture ── */
+.quarto-title {
+  font-family: 'DM Serif Display', serif;
+}
+
+pre {
+  background: #f8f9ff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.85rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th {
+  background: #f8f9ff;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+td {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  color: #6b7280;
+}

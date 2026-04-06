@@ -1,0 +1,23 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "SkillScan"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Accueil
+      - href: about.qmd
+        text: Architecture
+    right:
+      - icon: github
+        href: https://github.com/anhlinhpiketty/Mise_en_production_DS
+        text: GitHub
+
+format:
+  html:
+    theme: flatly
+    css: styles.css
+    toc: false
+    page-layout: full
