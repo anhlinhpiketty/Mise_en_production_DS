@@ -13,11 +13,15 @@ import os
 import duckdb
 from bs4 import BeautifulSoup
 import s3fs
+from dotenv import load_dotenv
 
 # Import local
 import llm
 
+
+load_dotenv()
 S3_PATH = os.environ['S3_PATH']
+
 # Chemins relatifs (à changer)
 PROMPT_NUM = S3_PATH+'/prompt_num.txt'
 PROMPT_THEME = S3_PATH+'/prompt_thematique.txt'
