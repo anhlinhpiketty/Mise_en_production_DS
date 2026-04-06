@@ -4,41 +4,41 @@
     "href": "about.html",
     "title": "Architecture",
     "section": "",
-    "text": "Le projet est organisé en deux dépôts GitHub distincts :\nDépôt principal — Mise_en_production_DS\nMise_en_production_DS/\n├── .github/workflows/    # CI/CD : build Docker, tests\n├── config_infer_llm/     # Configuration des LLMs\n├── data/                 # Données d'entrée\n├── deployment/           # Fichiers de déploiement Kubernetes\n├── frontend/             # Application Streamlit\n│   ├── app.py\n│   ├── Dockerfile\n│   └── requirements.txt\n├── outputs/              # Sorties du modèle\n├── prompts/              # Prompts LLM\n├── src/                  # Scripts de classification\n├── website/              # Ce site (GitHub Pages)\n└── pyproject.toml\nDépôt de déploiement — à venir"
+    "text": "&lt;"
   },
   {
     "objectID": "about.html#structure-des-dépôts",
     "href": "about.html#structure-des-dépôts",
-    "title": "Architecture",
-    "section": "",
-    "text": "Le projet est organisé en deux dépôts GitHub distincts :\nDépôt principal — Mise_en_production_DS\nMise_en_production_DS/\n├── .github/workflows/    # CI/CD : build Docker, tests\n├── config_infer_llm/     # Configuration des LLMs\n├── data/                 # Données d'entrée\n├── deployment/           # Fichiers de déploiement Kubernetes\n├── frontend/             # Application Streamlit\n│   ├── app.py\n│   ├── Dockerfile\n│   └── requirements.txt\n├── outputs/              # Sorties du modèle\n├── prompts/              # Prompts LLM\n├── src/                  # Scripts de classification\n├── website/              # Ce site (GitHub Pages)\n└── pyproject.toml\nDépôt de déploiement — à venir"
+    "title": "Architecture du projet",
+    "section": "Structure des dépôts",
+    "text": "Structure des dépôts\nLe projet est organisé en deux dépôts GitHub distincts :\nDépôt principal — Mise_en_production_DS\nMise_en_production_DS/\n├── .github/workflows/    # CI/CD : build Docker, tests\n├── config_infer_llm/     # ???\n├── data/                 # à supprimer surement\n├── deployment/           # Fichiers de déploiement \n├── frontend/             # Application Streamlit\n│   ├── app.py\n│   ├── Dockerfile\n│   └── requirements.txt\n├── outputs/              # Sorties du modèle\n├── prompts/              # Prompts LLM\n├── src/                  # Scripts de classification\n├── website/              # Ce site (GitHub Pages)\n└── pyproject.toml\nDépôt de déploiement — à venir"
   },
   {
     "objectID": "about.html#architecture-technique",
     "href": "about.html#architecture-technique",
-    "title": "Architecture",
+    "title": "Architecture du projet",
     "section": "Architecture technique",
-    "text": "Architecture technique\nUtilisateur\n    │\n    ▼\n┌─────────────────┐\n│  Frontend        │  Streamlit · Docker · SSP Cloud\n│  (Anh Linh)     │\n└────────┬────────┘\n         │ POST /analyze\n         ▼\n┌─────────────────┐\n│  API             │  FastAPI · Docker · SSP Cloud\n│  (Colas)        │\n└────────┬────────┘\n         │\n         ▼\n┌─────────────────┐\n│  Modèle LLM     │  Classification hiérarchique\n│  + Parachute    │  Modèle de secours si indispo\n└─────────────────┘"
+    "text": "Architecture technique\nSchéma avec Utilisateur &lt;- Frontend &lt;- API &lt;- Modèle &lt;- Entrainement\n                                            &lt;- Parachute if needed"
   },
   {
     "objectID": "about.html#pipeline-de-classification",
     "href": "about.html#pipeline-de-classification",
-    "title": "Architecture",
+    "title": "Architecture du projet",
     "section": "Pipeline de classification",
-    "text": "Pipeline de classification\nLes compétences sont extraites puis classifiées en plusieurs niveaux :\n\n\n\n\n\n\n\n\nNiveau\nDescription\nCatégories\n\n\n\n\n1er\nType de compétence\nSoft Skill, Compétence numérique, Compétence non numérique, Domaine/Secteur, Certification\n\n\n2e\nThématique (si numérique)\nDonnées & IA, Dev applicatif, Infrastructure…\n\n\n3e\nNiveau (si numérique)\nBasique, Intermédiaire, Avancé\n\n\n4e\nCatégorie IA (si applicable)\nMachine Learning, IA générative…"
+    "text": "Pipeline de classification\nLes compétences sont extraites puis classifiées en plusieurs niveaux :\n\n\n\n\n\n\n\n\nNiveau\nDescription\nCatégories\n\n\n\n\n1er\nType de compétence\nSoft Skill, Compétence numérique, Compétence non numérique, Domaine/Secteur, Certification\n\n\nSi numérique :\n\n\n\n\n2e\nThématique\nDonnées & IA, Dev applicatif, Infrastructure…\n\n\n3e\nNiveau\nBasique, Intermédiaire, Avancé\n\n\n4e\nCatégorie IA\nMachine Learning, IA générative…"
   },
   {
     "objectID": "about.html#cicd",
     "href": "about.html#cicd",
-    "title": "Architecture",
+    "title": "Architecture du projet",
     "section": "CI/CD",
     "text": "CI/CD\nLe projet utilise GitHub Actions pour :\n\nBuild et push automatique de l’image Docker du frontend sur Docker Hub à chaque push sur la branche anhlinh\n(à venir) Tests automatiques de qualité du code\n(à venir) Déploiement automatique sur SSP Cloud via ArgoCD"
   },
   {
     "objectID": "about.html#déploiement",
     "href": "about.html#déploiement",
-    "title": "Architecture",
+    "title": "Architecture du projet",
     "section": "Déploiement",
-    "text": "Déploiement\nL’application est déployée sur SSP Cloud (plateforme de l’INSEE) :\n\nLe frontend Streamlit tourne dans un conteneur Docker\nL’API de classification tourne dans un conteneur séparé\nArgoCD gère le déploiement continu en mode GitOps"
+    "text": "Déploiement\nL’application est déployée sur SSP Cloud (plateforme de l’INSEE) (insérer lien) :\n\nLe frontend Streamlit tourne dans un conteneur Docker\nL’API de classification tourne dans un conteneur séparé\nArgoCD gère le déploiement continu en mode GitOps"
   }
 ]
