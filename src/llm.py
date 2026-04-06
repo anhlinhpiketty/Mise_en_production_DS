@@ -1,33 +1,54 @@
+"""
+Module d'appel LLM via l'API compatible OpenAI.
+
+Fournit une fonction `call` pour envoyer une liste de compétences à un modèle
+de langage avec un prompt système, et retourner les objets JSON parsés.
+"""
+
 import re
-from openai import 
+import json
 import os
+from typing import List
+
+from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_URL = ""
+BASE_URL = os.environ.get("BASE_URL", "")
 
 
-def call_llm(self, competences: List[str], model_name, temperature, system_prompt) -> List[dict]:
+def call(competences: List[str], system_prompt: str) -> List[dict]:
+    """
+    Envoie une liste de compétences à un LLM et retourne les objets JSON parsés.
+
+    Args:
+        competences: Liste de libellés de compétences à classifier.
+        system_prompt: Prompt système décrivant la tâche de classification.
+
+    Returns:
+        Liste de dictionnaires JSON extraits de la réponse du modèle.
+        Les blocs JSON invalides sont ignorés avec un avertissement.
+    """
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": json.dumps(competences, ensure_ascii=False)}
     ]
 
-    client = create_client(
-            api_key=os.environ["API_KEY"],
-            base_url=BASE_URL
-        )
-    
+    client = _create_client(
+        api_key=os.environ["API_KEY"],
+        base_url=BASE_URL
+    )
+
     response = client.chat.completions.create(
-        model=model_name,
+        model=os.environ["MODEL_NAME"],
         messages=messages,
-        temperature=temperature,
+        temperature=float(os.environ.get("TEMPERATURE", 0.0)),
     )
 
     text = response.choices[0].message.content
 
-    # Extraction robuste des objets JSON
+    # Extraction robuste des objets JSON dans la réponse
     json_blocks = re.findall(r'\{.*?\}', text, re.DOTALL)
 
     parsed = []
@@ -40,7 +61,18 @@ def call_llm(self, competences: List[str], model_name, temperature, system_promp
     return parsed
 
 
-def create_client(self, api_key: str, base_url: str):
-    if base_url == "openai":
+def _create_client(api_key: str, base_url: str) -> OpenAI:
+    """
+    Crée un client OpenAI pointant vers OpenAI natif ou un endpoint compatible.
+
+    Args:
+        api_key: Clé d'API à utiliser.
+        base_url: URL de base de l'API. Passer une chaîne vide ou "openai"
+                  pour utiliser l'endpoint OpenAI officiel.
+
+    Returns:
+        Instance configurée du client OpenAI.
+    """
+    if not base_url or base_url.lower() == "openai":
         return OpenAI(api_key=api_key)
     return OpenAI(api_key=api_key, base_url=base_url)
