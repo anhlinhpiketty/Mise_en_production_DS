@@ -1,2 +1,10 @@
-/.quarto/
-**/*.quarto_ipynb
+# Ignorer les dossiers de rendu Quarto
+.quarto/
+_site/
+
+# Ignorer les fichiers de cache Python
+__pycache__/
+*.py[cod]
+
+# Ignorer les fichiers temporaires SASS
+.sass-cache/
