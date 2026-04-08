@@ -1,0 +1,111 @@
+---
+title: ""
+page-layout: custom
+---
+
+```{=html}
+<!-- HERO SECTION -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-tag">Mise en Production de Projet de Data Science</p>
+    <h1 class="hero-title">Something</h1>
+    <p class="hero-subtitle">
+      Diagnostic automatique des compétences d'une offre d'emploi grâce à une classification par LLM.
+    </p>
+    <a href="http://localhost:8501" class="btn-primary" target="_blank">
+      Accéder à l'application →
+    </a>
+  </div>
+</section>
+
+<!-- DESCRIPTION -->
+<section class="section">
+  <div class="container">
+
+    <h2>Le projet</h2>
+    <p>
+      Something est un outil de classification automatique des compétences issues d'offres d'emploi. À partir d'un texte brut, il extrait les compétences mentionnées et les classe en grandes catégories grâce à une pipeline de classification par LLM.
+    </p>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h3>Objectif</h3>
+        <p>Automatiser l'analyse des offres d'emploi pour identifier les compétences requises, qu'elles soient techniques, soft skills ou sectorielles.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h3>Focus Numérique</h3>
+        <p>
+          Une classification avancée des compétences numériques par niveau, thématique (IA, infrastructure, ...) et catégorie IA (ML, IA générative, ...).
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h3>Modèles</h3>
+        <p>Une pipeline de classification en plusieurs niveaux :</p>
+        <ul>
+          <li>CamemBERTa-v2 pour extraire.</li>
+          <li>LLMlab pour classifier.</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- UTILISATION -->
+<section class="section section-alt">
+  <div class="container">
+    <h2>Comment ça marche ?</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="step-number">1</span>
+        <p>Collez le texte d'une offre d'emploi dans la zone de texte</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <span class="step-number">2</span>
+        <p>Le modèle extrait et classifie les compétences</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <span class="step-number">3</span>
+        <p>Les résultats s'affichent par catégorie avec les détails de classification</p>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top: 2rem;">
+      <a href="http://localhost:8501" class="btn-primary" target="_blank">Essayer maintenant →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ÉQUIPE -->
+<section class="section">
+  <div class="container">
+    <h2>Équipe</h2>
+    <div class="team">
+      <div class="team-member">
+        <strong>Colas</strong>
+        <span>boss lady</span>
+      </div>
+      <div class="team-member">
+        <strong>Arthur</strong>
+        <span>boss lady</span>
+      </div>
+      <div class="team-member">
+        <strong>Mateo</strong>
+        <span>boss lady</span>
+      </div>
+      <div class="team-member">
+        <strong>Anh Linh</strong>
+        <span>boss lady</span>
+      </div>
+    </div>
+  </div>
+</section>
+```

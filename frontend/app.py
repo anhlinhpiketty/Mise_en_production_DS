@@ -18,24 +18,26 @@ TIMEOUT_SECONDES = 5
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap');
 
 html, body, [class*="css"] {
     font-family: 'DM Sans', sans-serif;
 }
 
 h1, h2, h3 {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
 }
 
 /* Titre principal */
 .main-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 3.2rem;   
+    font-weight: 800;  
     color: #1a1a2e;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.1rem;
+    letter-spacing: -0.02em; 
 }
-
 .subtitle {
     color: #6b7280;
     font-size: 1rem;
