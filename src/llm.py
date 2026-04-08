@@ -9,13 +9,20 @@ import re
 import json
 import os
 from typing import List
+import logging
 
 from openai import OpenAI
 from dotenv import load_dotenv
 
+from src.logging_config import setup_logging
+
 load_dotenv(override=True)
 
 BASE_URL = os.environ.get("BASE_URL", "")
+
+# Setup logging
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 def call(competences: List[str], system_prompt: str) -> List[dict]:
@@ -32,32 +39,35 @@ def call(competences: List[str], system_prompt: str) -> List[dict]:
     """
     messages = [
         {"role": "system", "content": system_prompt},
-        {"role": "user", "content": json.dumps(competences, ensure_ascii=False)}
+        {"role": "user", "content": json.dumps(competences, ensure_ascii=False)},
     ]
 
-    client = _create_client(
-        api_key=os.environ["API_KEY"],
-        base_url=BASE_URL
-    )
+    logger.debug("Appel LLM pour %d compétence(s)", len(competences))
 
-    response = client.chat.completions.create(
-        model=os.environ["MODEL_NAME"],
-        messages=messages,
-        temperature=float(os.environ.get("TEMPERATURE", 0.0)),
-    )
+    try:
+        client = _create_client(api_key=os.environ["API_KEY"], base_url=BASE_URL)
+        response = client.chat.completions.create(
+            model=os.environ["MODEL_NAME"],
+            messages=messages,
+            temperature=float(os.environ.get("TEMPERATURE", 0.0)),
+        )
+    except Exception:
+        logger.exception("Échec de l'appel LLM")
+        return []
 
     text = response.choices[0].message.content
-
-    # Extraction robuste des objets JSON dans la réponse
-    json_blocks = re.findall(r'\{.*?\}', text, re.DOTALL)
+    json_blocks = re.findall(r"\{.*?\}", text, re.DOTALL)
 
     parsed = []
     for block in json_blocks:
         try:
             parsed.append(json.loads(block))
         except json.JSONDecodeError:
-            print(f"JSON invalide ignoré : {block}")
+            logger.warning("Bloc JSON invalide ignoré : %.80s...", block)
 
+    logger.debug(
+        "%d objet(s) JSON parsé(s) sur %d bloc(s)", len(parsed), len(json_blocks)
+    )
     return parsed
 
 

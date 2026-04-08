@@ -1,9 +1,15 @@
 """API pour l'extraction et classication de compétence à partir d'offres d'emploi"""
 
+import logging
 from fastapi import FastAPI
+
+from src.logging_config import setup_logging
 from src.classification import classify
 from src.extraction import extract_skills_from
 
+# Setup logging
+setup_logging()
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="Extraction et classification de compétences à partir d'offres d'emploi",
@@ -30,6 +36,7 @@ async def analyze(
    desc_offre: str = ""
 ) -> list[dict]:
     """ """
+    logger.info("Requête /analyze reçue (longueur desc: %d)", len(desc_offre))
     skills = extract_skills_from(desc_offre)
     classification = classify(skills)
     return classification
