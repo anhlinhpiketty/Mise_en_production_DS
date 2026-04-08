@@ -12,10 +12,10 @@ Ce fichier permet de valider les fonctionnalités suivantes :
 import sys
 import traceback
 import os
-from llm import *
-from classification import *
-from classification import (_get_classif_history_connection)
-from extraction import * 
+from src.llm import *
+from src.classification import *
+from src.classification import (_get_classif_history_connection)
+from src.extraction import * 
 
 
 def test_normalize_cases():
