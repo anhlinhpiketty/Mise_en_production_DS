@@ -8,7 +8,7 @@ import spacy
 from dotenv import load_dotenv
 import s3fs
 
-load_dotenv()
+load_dotenv(override=True)
 model_secret = os.environ["MODEL_SECRET"]
 
 # CONFIG

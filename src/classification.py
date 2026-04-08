@@ -16,10 +16,10 @@ import s3fs
 from dotenv import load_dotenv
 
 # Import local
-import llm
+import src.llm as llm
 
 
-load_dotenv()
+load_dotenv(override=True)
 S3_PATH = os.environ['S3_PATH']
 
 # Chemins relatifs (à changer)
@@ -227,7 +227,7 @@ def _load_classif_history() -> duckdb.DuckDBPyConnection:
             SESSION_TOKEN '{os.environ["AWS_SESSION_TOKEN"]}',
             ENDPOINT '{os.environ["AWS_S3_ENDPOINT"]}',
             URL_STYLE 'path',
-            SCOPE '{BASE_PATH}'
+            SCOPE '{S3_PATH}'
         );
     """)
 
