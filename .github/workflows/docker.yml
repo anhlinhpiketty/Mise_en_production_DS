@@ -19,14 +19,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build et push de l'image du front
-        uses: docker/build-push-action@v5
-        with:
-          context: .                       
-          file: ./frontend/Dockerfile      
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/frontend_jobsearch:latest 
       - name: Build et push de l'image de l'api (backend)
         uses: docker/build-push-action@v5
         with:
