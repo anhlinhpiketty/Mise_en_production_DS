@@ -1,8 +1,8 @@
-FROM ubuntu:22.04
+FROM python:3.13-slim
 
-# Install Python et curl
-RUN apt-get -y update && \
-    apt-get install -y python3-pip curl
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -17,4 +17,4 @@ COPY app ./app
 COPY src ./src
 
 # Lancement
-CMD ["uv", "run", "uvicorn", "app.api:app", "--host='0.0.0.0'"]
+CMD ["bash", "-c", "./app/run.sh"]

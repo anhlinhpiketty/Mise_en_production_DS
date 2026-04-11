@@ -61,7 +61,11 @@ def import_model() -> spacy.language.Language:
 
     if not os.path.exists(LOCAL_MODEL_PATH):
         logger.info("Téléchargement du modèle depuis S3 : %s", S3_MODEL_PATH)
-        fs.get(S3_MODEL_PATH, LOCAL_MODEL_PATH, recursive=True)
+        try:
+            fs.get(S3_MODEL_PATH, LOCAL_MODEL_PATH, recursive=True)
+        except Exception:
+            logger.warning("Erreur dans le téléchargement du model d'extraction")
+            raise
         logger.info("Téléchargement terminé")
     else:
         logger.debug("Modèle déjà présent localement, téléchargement ignoré")
