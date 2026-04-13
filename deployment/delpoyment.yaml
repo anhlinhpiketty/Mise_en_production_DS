@@ -20,8 +20,8 @@ spec:
         ports:
         - containerPort: 8000
         env:
-                - name: JETON_API
+                - name: API_KEY
                   valueFrom:
                     secretKeyRef:
                       name: api-jeton
-                      key: JETON_API
+                      key: API_KEY

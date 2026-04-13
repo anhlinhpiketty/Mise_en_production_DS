@@ -28,3 +28,8 @@ jobs:
           file: ./app/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME_BACK }}/jobless:latest
+          build-args: |
+            AWS_S3_ENDPOINT=${{ vars.AWS_S3_ENDPOINT }}
+            BASE_URL=${{ vars.BASE_URL }}
+            MODEL_NAME=${{ vars.MODEL_NAME }}
+            S3_PATH=${{ vars.S3_PATH }}
