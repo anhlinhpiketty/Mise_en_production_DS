@@ -1,30 +1,30 @@
-FROM python:3.13-slim
+FROM python:3.13-slim AS builder
 
-RUN apt-get update && \
-    apt-get install -y curl && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install uv
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin/:$PATH"
 
-ARG AWS_S3_ENDPOINT
-ARG BASE_URL
-ARG MODEL_NAME
-ARG S3_PATH
+WORKDIR /app
 
-ENV AWS_S3_ENDPOINT=$AWS_S3_ENDPOINT
-ENV BASE_URL=$BASE_URL
-ENV MODEL_NAME=$MODEL_NAME
-ENV S3_PATH=$S3_PATH
+# Installe d'abord PyTorch CPU AVANT uv sync
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
-# Installation
 COPY pyproject.toml .
-RUN uv sync 
+RUN uv sync
 
-# Copie de l'app
+# ── Runtime ────────────────────────────────────────────────
+FROM python:3.13-slim
+
+COPY --from=builder /usr/local/lib/python3.13 /usr/local/lib/python3.13
+COPY --from=builder /usr/local/bin /usr/local/bin
+
 COPY app ./app
 COPY src ./src
 
-# Lancement
+ARG AWS_S3_ENDPOINT BASE_URL MODEL_NAME S3_PATH
+ENV AWS_S3_ENDPOINT=$AWS_S3_ENDPOINT \
+    BASE_URL=$BASE_URL \
+    MODEL_NAME=$MODEL_NAME \
+    S3_PATH=$S3_PATH
+
 CMD ["bash", "-c", "./app/run.sh"]

@@ -22,6 +22,15 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 
+# Charge une seule fois au démarrage du module
+_nlp: spacy.language.Language | None = None
+
+def get_model() -> spacy.language.Language:
+    global _nlp
+    if _nlp is None:
+        _nlp = import_model()
+    return _nlp
+
 def extract_skills_from(desc_offre: str) -> list[str]:
     """
     Effectue l'inférence pour extraire les compétences d'une description d'offre d'emploi.
@@ -33,7 +42,7 @@ def extract_skills_from(desc_offre: str) -> list[str]:
         list[str]: Liste des compétences extraites.
     """
     try:
-        nlp = import_model()
+        nlp = get_model()
         with nlp.select_pipes(enable=["transformer", "ner"]):
             doc = nlp(desc_offre)
         skills = [e.text for e in doc.ents]

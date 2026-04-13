@@ -245,9 +245,6 @@ def _load_classif_history() -> duckdb.DuckDBPyConnection:
     con.execute(f"""
         CREATE OR REPLACE SECRET custom_secret_minio (
             TYPE S3,
-            KEY_ID '{os.environ["AWS_ACCESS_KEY_ID"]}',
-            SECRET '{os.environ["AWS_SECRET_ACCESS_KEY"]}',
-            SESSION_TOKEN '{os.environ["AWS_SESSION_TOKEN"]}',
             ENDPOINT '{os.environ["AWS_S3_ENDPOINT"]}',
             URL_STYLE 'path',
             SCOPE '{S3_PATH}'
