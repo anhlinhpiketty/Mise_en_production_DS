@@ -1,16 +1,20 @@
-"""A simple API to expose our trained RandomForest model for Tutanic survival."""
+"""API pour l'extraction et classication de compétence à partir d'offres d'emploi"""
 
+import logging
 from fastapi import FastAPI
-import skops.io as sio
-import pandas as pd
 
-unknown_types = sio.get_untrusted_types(file="model.skops")
-model = sio.load("model.skops", trusted=unknown_types)
+from src.logging_config import setup_logging
+from src.classification import classify
+from src.extraction import extract_skills_from
+
+# Setup logging
+setup_logging()
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="Prédiction de survie sur le Titanic",
-    description="Application de prédiction de survie sur le Titanic 🚢 <br>Une version par API pour faciliter la réutilisation du modèle 🚀"
-    + '<br><br><img src="https://media.vogue.fr/photos/5faac06d39c5194ff9752ec9/1:1/w_2404,h_2404,c_limit/076_CHL_126884.jpg" width="200">',
+    title="Extraction et classification de compétences à partir d'offres d'emploi",
+    description="<br>Une version par API pour faciliter la réutilisation du modèle 🚀"
+    + '<br>',
 )
 
 
@@ -21,29 +25,18 @@ def show_welcome_page():
     """
 
     return {
-        "Message": "API de prédiction de survie sur le Titanic",
-        "Model_name": "Titanic ML",
+        "Message": "API d'extraction et de classification de compétences issues d'offres d'emploi",
+        "Model_name": "NER_LLM_JOCAS",
         "Model_version": "0.1",
     }
 
 
-@app.get("/predict", tags=["Predict"])
-async def predict(
-    sex: str = "female", age: float = 29.0, fare: float = 16.5, embarked: str = "S"
-) -> str:
+@app.get("/analyze", tags=["Analyze"])
+async def analyze(
+   desc_offre: str = ""
+) -> list[dict]:
     """ """
-
-    df = pd.DataFrame(
-        {
-            "Sex": [sex],
-            "Age": [age],
-            "Fare": [fare],
-            "Embarked": [embarked],
-        }
-    )
-
-    prediction = int(model.predict(df)[0])
-
-    prediction = "Survived 🎉" if prediction == 1 else "Dead ⚰️"
-
-    return prediction
+    logger.info("Requête /analyze reçue (longueur desc: %d)", len(desc_offre))
+    skills = extract_skills_from(desc_offre)
+    classification = classify(skills)
+    return classification
