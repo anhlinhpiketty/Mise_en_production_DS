@@ -19,3 +19,9 @@ spec:
         image: arthurleroudier/jobless:latest
         ports:
         - containerPort: 4000
+        env:
+                - name: JETON_API
+                  valueFrom:
+                    secretKeyRef:
+                      name: api-jeton
+                      key: JETON_API
