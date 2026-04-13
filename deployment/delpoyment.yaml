@@ -5,7 +5,7 @@ metadata:
   labels:
     app: jobless
 spec:
-  replicas: arthurleroudier
+  replicas: 1
   selector:
     matchLabels:
       app: jobless
