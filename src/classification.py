@@ -60,10 +60,7 @@ def _get_classif_history_connection() -> duckdb.DuckDBPyConnection:
 def read_txt(path: str) -> str:
     """Lit et retourne le contenu d'un fichier texte."""
     fs = s3fs.S3FileSystem(
-        client_kwargs={"endpoint_url": "https://" + "minio.lab.sspcloud.fr"},
-        key=os.environ["AWS_ACCESS_KEY_ID"],
-        secret=os.environ["AWS_SECRET_ACCESS_KEY"],
-        token=os.environ["AWS_SESSION_TOKEN"],
+        client_kwargs={"endpoint_url": "https://" + os.environ['AWS_S3_ENDPOINT']}
     )
     with fs.open(path) as f:
         return f.read().decode("utf-8")
