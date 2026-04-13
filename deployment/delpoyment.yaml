@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobless-deployment
+  labels:
+    app: jobless
+spec:
+  replicas: arthurleroudier
+  selector:
+    matchLabels:
+      app: jobless
+  template:
+    metadata:
+      labels:
+        app: jobless
+    spec:
+      containers:
+      - name: titanic
+        image: arthurleroudier/jobless
+        ports:
+        - containerPort: 4000

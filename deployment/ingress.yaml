@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: titanic-ingress
+  name: jobless-ingress
   annotations:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
@@ -12,15 +12,15 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - titanic-mise-en-prod-arthur.lab.sspcloud.fr
+    - jobless.lab.sspcloud.fr
   rules:
-  - host: titanic-mise-en-prod-arthur.lab.sspcloud.fr
+  - host: jobless.lab.sspcloud.fr
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: titanic-service
+            name: jobless-service
             port:
-              number: 80
+              number: 40
