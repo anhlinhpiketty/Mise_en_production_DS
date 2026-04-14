@@ -176,63 +176,70 @@ def classify_from_llm(skills: List[str]) -> List[Dict[str, Any]]:
 def classify_from_history(skills: List[str]) -> List[Dict[str, Any]]:
     """
     Recherche des compétences dans l'historique de classifications (DuckDB).
+    Une seule requête pour toutes les compétences.
     """
+    if not skills:
+        return []
+
     try:
         con = _get_classif_history_connection()
     except Exception:
         logger.exception("Impossible d'initialiser la connexion DuckDB")
         return [{"label": s, "categorie": None, "details": None} for s in skills]
 
+    # Normalisation locale + mapping vers le label original
+    normalized_to_original: Dict[str, str] = {
+        normalize(skill): skill for skill in skills
+    }
+    normalized_list = list(normalized_to_original.keys())
+
+    try:
+        # Une seule requête pour toutes les compétences
+        result_df = con.execute("""
+            SELECT
+                norm_label,
+                num_entree,
+                num_cat,
+                theme_cat,
+                niv_cat,
+                ia_cat
+            FROM classif_history
+            WHERE norm_label = ANY(?)
+        """, [normalized_list]).df()
+
+        # Index des résultats par norm_label pour lookup O(1)
+        found: Dict[str, Any] = {
+            row["norm_label"]: row
+            for _, row in result_df.iterrows()
+        }
+
+    except Exception:
+        logger.exception("Erreur lors de la requête DuckDB batch")
+        return [{"label": s, "categorie": None, "details": None} for s in skills]
+
+    # Reconstruction de la liste de sortie dans l'ordre d'entrée
     output = []
+    for normalized, original in normalized_to_original.items():
+        if normalized not in found:
+            output.append({"label": original, "categorie": None, "details": None})
+            continue
 
-    for skill in skills:
-        try:
-            normalized_skill = normalize(skill).replace("'", "''")  # échappement SQL
-
-            query = f"""
-                SELECT
-                    norm_label,
-                    num_entree,
-                    num_cat,
-                    theme_cat,
-                    niv_cat,
-                    ia_cat
-                FROM classif_history
-                WHERE norm_label = '{normalized_skill}'
-                LIMIT 1
-            """
-
-            result = con.sql(query).df()
-
-            if result.empty:
-                # Compétence jamais classifiée
-                output.append({"label": skill, "categorie": None, "details": None})
-            else:
-                row = result.iloc[0]
-                is_num = row["num_cat"] == "compétence numérique"
-                details = (
-                    {
-                        "thematique": row["theme_cat"],
-                        "niveau": row["niv_cat"],
-                        "categorie_ia": None
-                        if row["ia_cat"] == "Erreur"
-                        else row["ia_cat"],
-                    }
-                    if is_num
-                    else None
-                )
-                output.append(
-                    {
-                        "label": row["num_entree"],
-                        "categorie": row["num_cat"],
-                        "details": details,
-                    }
-                )
-        except Exception:
-            logger.exception(
-                "Erreur lors de la requête DuckDB pour la compétence : %s", skill
-            )
-            output.append({"label": skill, "categorie": None, "details": None})
+        row = found[normalized]
+        is_num = row["num_cat"] == "compétence numérique"
+        details = (
+            {
+                "thematique": row["theme_cat"],
+                "niveau": row["niv_cat"],
+                "categorie_ia": None if row["ia_cat"] == "Erreur" else row["ia_cat"],
+            }
+            if is_num
+            else None
+        )
+        output.append({
+            "label": row["num_entree"],
+            "categorie": row["num_cat"],
+            "details": details,
+        })
 
     return output
 
@@ -250,7 +257,7 @@ def _load_classif_history() -> duckdb.DuckDBPyConnection:
 
 
     con.sql(f"""
-        CREATE VIEW classif_history AS
+        CREATE TABLE classif_history AS
         SELECT DISTINCT ON (norm.clean)
             norm.clean AS norm_label,
             num.original AS num_original,
@@ -272,5 +279,8 @@ def _load_classif_history() -> duckdb.DuckDBPyConnection:
         LEFT JOIN read_csv('{HISTORY_IA}') AS ia
             ON num.entrée = ia.original
     """)
+
+    # Index pour les lookups par norm_label
+    con.sql("CREATE INDEX idx_norm_label ON classif_history (norm_label)")
 
     return con

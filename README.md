@@ -51,20 +51,29 @@ Dans /config_infer_llm --> un fichier de config exemple pour
 5. Déploiement d'une interface graphique
 
 
+### Variables d'environement à renseigner :
+
+#### **Secrets Kubernetes**
+Créez un secret Kubernetes pour stocker la clé API LLM :
+```bash
+kubectl create secret generic api-jeton --from-literal=API_KEY='votre_clé_api_llm'
+```
+> **Note** : Remplacez `votre_clé_api_llm` par la clé API réelle fournie par votre service LLM.
+---
+
+
+#### **Variables GitHub**
+Les variables suivantes doivent être définies dans les **paramètres de votre dépôt GitHub** (`Settings > Secrets and variables > Actions > Variables`) :
+
+| Variable               | Description                                      | Exemple de valeur                          |
+|------------------------|--------------------------------------------------|--------------------------------------------|
+| `BASE_URL`             | URL de base de l'API LLM                         | `https://llm.lab.sspcloud.fr/api`          |
+| `MODEL_NAME`           | Nom du modèle LLM à utiliser                     | `gpt-oss:120b`                             |
+| `S3_PATH`              | Chemin du bucket S3 pour les données             | `s3://colaslepoutre/diffusion/jobless` |
+| `AWS_S3_ENDPOINT`      | Endpoint personnalisé pour le service S3 (MinIO)| `minio.lab.sspcloud.fr`                    |
+
+
+
 ### Free-LLM :
 
 https://github.com/O-LLM/Free-LLM
-
-### Variables d'environement à renseigner :
-
-MODEL_SECRET = "__" --> Clé d'accès au
-API_KEY = "_"
-BASE_URL = "https://llm.lab.sspcloud.fr/api"
-MODEL_NAME = "gpt-oss:120b"
-TEMPERATURE = "0.5"
-S3_PATH = 's3://colaslepoutre/Classification_compétences_jocas'
-AWS_ACCESS_KEY_ID =
-AWS_SECRET_ACCESS_KEY =
-AWS_SESSION_TOKEN =
-AWS_DEFAULT_REGION = 
-AWS_S3_ENDPOINT = "minio.lab.sspcloud.fr"
