@@ -33,3 +33,10 @@ jobs:
             BASE_URL=${{ vars.BASE_URL }}
             MODEL_NAME=${{ vars.MODEL_NAME }}
             S3_PATH=${{ vars.S3_PATH }}
+      - name: Build et push de l'image du front
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME_BACK }}/jobless_front:latest
