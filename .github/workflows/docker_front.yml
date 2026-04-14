@@ -1,4 +1,4 @@
-name: Build and push Docker image
+name: Build and push Front Docker image
 
 on:
   push:
@@ -21,15 +21,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME_BACK }}
           password: ${{ secrets.DOCKERHUB_TOKEN_BACK }}
-      - name: Build et push de l'image de l'api (backend)
+      - name: Build et push de l'image du front
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./app/Dockerfile
+          file: ./frontend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME_BACK }}/jobless:latest
-          build-args: |
-            AWS_S3_ENDPOINT=${{ vars.AWS_S3_ENDPOINT }}
-            BASE_URL=${{ vars.BASE_URL }}
-            MODEL_NAME=${{ vars.MODEL_NAME }}
-            S3_PATH=${{ vars.S3_PATH }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME_BACK }}/jobless_front:latest

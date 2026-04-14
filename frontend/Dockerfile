@@ -9,7 +9,7 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin/:$PATH"
 
 # Installation
-# NB : je crois que lino veuille pas qu'on utilise requireemtns donc à reregarder
+
 COPY pyproject.toml .
 RUN uv sync 
 

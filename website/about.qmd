@@ -44,13 +44,42 @@ Schéma avec Utilisateur <- Frontend <- API <- Modèle <- Entrainement
 
 Les compétences sont extraites puis classifiées en plusieurs niveaux :
 
-| Niveau | Description | Catégories |
-|--------|-------------|------------|
-| 1er | Type de compétence | Soft Skill, Compétence numérique, Compétence non numérique, Domaine/Secteur, Certification |
-|Si numérique :                                |
-| 2e | Thématique | Données & IA, Dev applicatif, Infrastructure... |
-| 3e | Niveau | Basique, Intermédiaire, Avancé |
-| 4e | Catégorie IA | Machine Learning, IA générative... |
+<table>
+  <thead>
+    <tr style="border-bottom: 2px solid #000;">
+      <th style="text-align: left; padding: 8px;">Niveau</th>
+      <th style="text-align: left; padding: 8px;">Description</th>
+      <th style="text-align: left; padding: 8px;">Catégories</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 8px;">1er</td>
+      <td style="padding: 8px;">Type de compétence</td>
+      <td style="padding: 8px;">Soft Skill, Compétence numérique, Compétence non numérique, Domaine/Secteur, Certification</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="padding: 20px 8px 10px 8px; border: none; font-weight: normal; font-size: 1rem;">
+        Si numérique :
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">2e</td>
+      <td style="padding: 8px;">Thématique</td>
+      <td style="padding: 8px;">Données & IA, Dev applicatif, Infrastructure...</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">3e</td>
+      <td style="padding: 8px;">Niveau</td>
+      <td style="padding: 8px;">Basique, Intermédiaire, Avancé</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">4e</td>
+      <td style="padding: 8px;">Catégorie IA</td>
+      <td style="padding: 8px;">Machine Learning, IA générative...</td>
+    </tr>
+  </tbody>
+</table>
 
 <br>
 
