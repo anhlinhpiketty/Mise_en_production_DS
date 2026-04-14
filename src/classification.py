@@ -11,6 +11,7 @@ import re
 from typing import List, Dict, Optional, Any
 import os
 import logging
+import threading
 
 import duckdb
 from bs4 import BeautifulSoup
@@ -44,6 +45,7 @@ HISTORY_IA = S3_PATH + "/ia_num_competences_jocas_2019_to_2025.csv"
 
 # Variable globale pour la connexion DuckDB
 _DUCKDB_CONNECTION = None
+_DUCKDB_lock = threading.Lock()
 
 
 def _get_classif_history_connection() -> duckdb.DuckDBPyConnection:
@@ -52,8 +54,9 @@ def _get_classif_history_connection() -> duckdb.DuckDBPyConnection:
     Crée la connexion si elle n'existe pas encore.
     """
     global _DUCKDB_CONNECTION
-    if _DUCKDB_CONNECTION is None:
-        _DUCKDB_CONNECTION = _load_classif_history()
+    with _DUCKDB_lock:
+        if _DUCKDB_CONNECTION is None:
+            _DUCKDB_CONNECTION = _load_classif_history()
     return _DUCKDB_CONNECTION
 
 

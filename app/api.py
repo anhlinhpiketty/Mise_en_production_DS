@@ -2,6 +2,7 @@
 
 import logging
 from fastapi import FastAPI
+from starlette.concurrency import run_in_threadpool
 
 from src.logging_config import setup_logging
 from src.classification import classify
@@ -30,13 +31,9 @@ def show_welcome_page():
         "Model_version": "0.1",
     }
 
-
 @app.get("/analyze", tags=["Analyze"])
-def analyze(
-   desc_offre: str = ""
-) -> list[dict]:
-    """ """
+async def analyze(desc_offre: str = "") -> list[dict]:
     logger.info("Requête /analyze reçue (longueur desc: %d)", len(desc_offre))
-    skills = extract_skills_from(desc_offre)
-    classification = classify(skills)
+    skills = await run_in_threadpool(extract_skills_from, desc_offre)
+    classification = await run_in_threadpool(classify, skills)
     return classification
