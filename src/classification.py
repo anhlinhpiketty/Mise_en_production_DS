@@ -243,6 +243,12 @@ def _load_classif_history() -> duckdb.DuckDBPyConnection:
     """
     con = duckdb.connect()
 
+    con.execute("SET s3_region='us-east-1'")
+    con.execute("SET s3_url_style='path'")
+    con.execute("SET s3_use_ssl=true")
+    con.execute(f"SET s3_endpoint='{os.environ['AWS_S3_ENDPOINT']}'")
+
+
     con.sql(f"""
         CREATE VIEW classif_history AS
         SELECT DISTINCT ON (norm.clean)

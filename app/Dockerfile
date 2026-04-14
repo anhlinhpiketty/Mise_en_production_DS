@@ -11,6 +11,7 @@ COPY src ./src
 
 COPY pyproject.toml .
 RUN uv sync
+RUN uv pip install -e .
 
 ARG AWS_S3_ENDPOINT BASE_URL MODEL_NAME S3_PATH
 ENV AWS_S3_ENDPOINT=$AWS_S3_ENDPOINT \
