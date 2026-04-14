@@ -32,7 +32,7 @@ def show_welcome_page():
 
 
 @app.get("/analyze", tags=["Analyze"])
-async def analyze(
+def analyze(
    desc_offre: str = ""
 ) -> list[dict]:
     """ """
