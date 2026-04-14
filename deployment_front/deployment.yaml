@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobless-front-deployment
+  labels:
+    app: jobless-front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jobless-front
+  template:
+    metadata:
+      labels:
+        app: jobless-front
+    spec:
+      containers:
+      - name: jobless_front
+        image: arthurleroudier/jobless_front:latest
+        ports:
+        - containerPort: 8000
+        env:
+                - name: API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: api-jeton
+                      key: API_KEY
