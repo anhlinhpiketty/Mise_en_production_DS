@@ -8,3 +8,5 @@ __pycache__/
 
 # Ignorer les fichiers temporaires SASS
 .sass-cache/
+/.quarto/
+**/*.quarto_ipynb

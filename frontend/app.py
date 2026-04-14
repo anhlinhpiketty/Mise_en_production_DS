@@ -5,7 +5,7 @@ import time
 # CONFIG -----------------------------------------------------------------------
 
 st.set_page_config(
-    page_title="?? No idea :)",
+    page_title="JobLess",
     page_icon="🔍",
     layout="centered",
 )
@@ -165,6 +165,36 @@ h1, h2, h3 {
 
 </style>
 """, unsafe_allow_html=True)
+
+
+# API -----------------------------------------------------------------------------
+
+API_URL = "https://jobless.lab.sspcloud.fr/analyze/"
+TIMEOUT_SECONDES = 30 
+
+def appeler_api(texte_offre: str):
+    """
+    Appelle l'API
+    """
+    params = {"desc_offre": texte_offre}
+    
+    try:
+
+        response = requests.get(
+            API_URL, 
+            params=params,
+            timeout=TIMEOUT_SECONDES)
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            st.error(f"Erreur {response.status_code} : {response.text}")
+            return None
+            
+    except Exception as e:
+        st.error(f"Le serveur ne répond pas : {e}")
+        return None
+         
 
 # MOCK API (à remplacer par le vrai appel quand l'API sera prête) -----------------
 # Ici on peut simuler plusieurs scénarios (dont la lenteur d'execution)
@@ -330,8 +360,8 @@ def afficher_resultats(resultat: dict, mode: str):
 
 # INTERFACE ----------------------------------------------------------------------
 
-st.markdown('<p class="main-title">I have no name idea</p>', unsafe_allow_html=True)
-st.markdown('<p class="subtitle">Diagnostic des compétences d\'une offre d\'emploi</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-title">JobLess</p>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle"><span style="font-weight:600;">J</span>ob <span style="font-weight:600;">O</span>ffer <span style="font-weight:600;">B</span>reakdown with <span style="font-weight:600;">L</span>LM <span style="font-weight:600;">E</span>xtraction & <span style="font-weight:600;">S</span>kills <span style="font-weight:600;">S</span>orting</p>', unsafe_allow_html=True)
 
 offre = st.text_area(
     "Collez votre offre d'emploi ici",
