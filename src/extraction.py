@@ -8,6 +8,7 @@ import logging
 import spacy
 from dotenv import load_dotenv
 import s3fs
+import threading
 
 from src.logging_config import setup_logging
 
@@ -24,11 +25,13 @@ logger = logging.getLogger(__name__)
 
 # Charge une seule fois au démarrage du module
 _nlp: spacy.language.Language | None = None
+_nlp_lock = threading.Lock()
 
 def get_model() -> spacy.language.Language:
     global _nlp
-    if _nlp is None:
-        _nlp = import_model()
+    with _nlp_lock:
+        if _nlp is None:
+            _nlp = import_model()
     return _nlp
 
 def extract_skills_from(desc_offre: str) -> list[str]:
@@ -43,8 +46,7 @@ def extract_skills_from(desc_offre: str) -> list[str]:
     """
     try:
         nlp = get_model()
-        with nlp.select_pipes(enable=["transformer", "ner"]):
-            doc = nlp(desc_offre)
+        doc = nlp(desc_offre)
         skills = [e.text for e in doc.ents]
         logger.info("%d compétence(s) extraite(s)", len(skills))
         return skills

@@ -15,7 +15,7 @@ spec:
         app: jobless-front
     spec:
       containers:
-      - name: jobless_front
+      - name: jobless-front
         image: arthurleroudier/jobless_front:latest
         ports:
         - containerPort: 8000
