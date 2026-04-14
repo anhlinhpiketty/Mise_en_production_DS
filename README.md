@@ -69,7 +69,7 @@ Les variables suivantes doivent être définies dans les **paramètres de votre 
 |------------------------|--------------------------------------------------|--------------------------------------------|
 | `BASE_URL`             | URL de base de l'API LLM                         | `https://llm.lab.sspcloud.fr/api`          |
 | `MODEL_NAME`           | Nom du modèle LLM à utiliser                     | `gpt-oss:120b`                             |
-| `S3_PATH`              | Chemin du bucket S3 pour les données             | `s3://colaslepoutre/Classification_compétences_jocas` |
+| `S3_PATH`              | Chemin du bucket S3 pour les données             | `s3://colaslepoutre/diffusion/jobless` |
 | `AWS_S3_ENDPOINT`      | Endpoint personnalisé pour le service S3 (MinIO)| `minio.lab.sspcloud.fr`                    |
 
 
