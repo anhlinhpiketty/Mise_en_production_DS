@@ -6,9 +6,6 @@ RUN apt-get update && \
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin/:$PATH"
 
-# Installe d'abord PyTorch CPU AVANT uv sync
-RUN uv pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
-
 COPY app ./app
 COPY src ./src
 
