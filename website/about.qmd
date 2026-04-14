@@ -34,8 +34,7 @@ Mise_en_production_DS/
 ## Architecture technique
 
 ```
-Schéma avec Utilisateur <- Frontend <- API <- Modèle <- Entrainement
-                                            <- Parachute if needed
+Schéma avec Utilisateur <- Frontend <- API <- Modèle 
 ```
 
 <br>

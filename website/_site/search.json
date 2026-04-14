@@ -11,7 +11,7 @@
     "href": "about.html#architecture-technique",
     "title": "Architecture du projet",
     "section": "Architecture technique",
-    "text": "Architecture technique\nSchéma avec Utilisateur &lt;- Frontend &lt;- API &lt;- Modèle &lt;- Entrainement\n                                            &lt;- Parachute if needed"
+    "text": "Architecture technique\nSchéma avec Utilisateur &lt;- Frontend &lt;- API &lt;- Modèle"
   },
   {
     "objectID": "about.html#pipeline-de-classification",

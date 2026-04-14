@@ -10,9 +10,9 @@ st.set_page_config(
     layout="centered",
 )
 
-# Timeout en secondes au-delà duquel on propose le parachute
-# A modifier, j'ai été vraiment pas patiente
-TIMEOUT_SECONDES = 5
+# # Timeout en secondes au-delà duquel on propose le parachute
+# # A modifier, j'ai été vraiment pas patiente
+# TIMEOUT_SECONDES = 5
 
 # STYLE ------------------------------------------------------------------------
 
@@ -357,10 +357,47 @@ def afficher_resultats(resultat: dict):
     st.markdown(f"### {total} compétence{'s' if total > 1 else ''} détectée{'s' if total > 1 else ''}")
     render_resultats(competences)
 
+def normaliser_categorie(cat):
+    if not cat:
+        return None
+
+    cat = cat.lower()
+
+    mapping = {
+        "soft skill": "Soft Skill",
+        "compétence numérique": "Compétence numérique",
+        "competence numérique": "Compétence numérique",
+        "compétence non numérique": "Compétence non numérique",
+        "domaine - secteur": "Domaine / Secteur",
+        "domaine / secteur": "Domaine / Secteur",
+        "certification": "Certification / Formation",
+    }
+
+    return mapping.get(cat, None)  
+
+def nettoyer_competences(data):
+    clean = []
+
+    for comp in data:
+        label = comp.get("label")
+        cat = normaliser_categorie(comp.get("categorie"))
+
+        # On skip si catégorie invalide
+        if not label or not cat:
+            continue
+
+        clean.append({
+            "label": label,
+            "categorie": cat,
+            "details": comp.get("details")
+        })
+
+    return clean
+
 
 # INTERFACE ----------------------------------------------------------------------
 
-st.markdown('<p class="main-title">JobLess</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-title">🔍 JobLess</p>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle"><span style="font-weight:600;">J</span>ob <span style="font-weight:600;">O</span>ffer <span style="font-weight:600;">B</span>reakdown with <span style="font-weight:600;">L</span>LM <span style="font-weight:600;">E</span>xtraction & <span style="font-weight:600;">S</span>kills <span style="font-weight:600;">S</span>orting</p>', unsafe_allow_html=True)
 
 offre = st.text_area(
@@ -384,11 +421,14 @@ if analyser:
     else:
         st.session_state["resultat"] = None
 
-        with st.spinner("Analyse avec le modèle..."):
+        with st.spinner("Analyse de l'offre..."):
             resultat = appeler_api(offre)
 
+        # st.write(resultat)
+
         if resultat:
-            st.session_state["resultat"] = resultat
+            resultat_clean = nettoyer_competences(resultat)
+            st.session_state["resultat"] = resultat_clean
         else:
             st.error("Impossible d'obtenir un résultat.")
 

@@ -62,6 +62,15 @@ page-layout: custom
 <section class="section section-alt">
   <div class="container">
     <h2>Comment ça marche ?</h2>
+    <div style="text-align:center; margin-top: 1.5rem;">
+      <a 
+        href="https://candidat.francetravail.fr/offres/emploi/data-scientist/s28m15" 
+        target="_blank"
+        class="blue-link"
+      >
+        Voir des exemples d’offres de Data Scientist sur France Travail 
+      </a>
+    </div>
     <div class="steps">
       <div class="step">
         <span class="step-number">1</span>
