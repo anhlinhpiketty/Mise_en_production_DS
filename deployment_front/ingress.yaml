@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: jobless-ingress
+  name: jobless-front-ingress
   annotations:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
@@ -12,15 +12,15 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - jobless.lab.sspcloud.fr
+    - jobless-website.lab.sspcloud.fr
   rules:
-  - host: jobless.lab.sspcloud.fr
+  - host: jobless-website.lab.sspcloud.fr
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: jobless-service
+            name: jobless-front-service
             port:
               number: 80

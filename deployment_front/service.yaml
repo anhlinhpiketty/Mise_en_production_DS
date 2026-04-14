@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: jobless-service
+  name: jobless-front-service
 spec:
   selector:
-    app: jobless
+    app: jobless-front
   ports:
     - protocol: TCP
       port: 80

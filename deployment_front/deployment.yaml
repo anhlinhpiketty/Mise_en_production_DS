@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jobless-deployment
+  name: jobless-front-deployment
   labels:
-    app: jobless
+    app: jobless-front
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: jobless
+      app: jobless-front
   template:
     metadata:
       labels:
-        app: jobless
+        app: jobless-front
     spec:
       containers:
-      - name: jobless
-        image: arthurleroudier/jobless:latest
+      - name: jobless_front
+        image: arthurleroudier/jobless_front:latest
         ports:
         - containerPort: 8000
         env:

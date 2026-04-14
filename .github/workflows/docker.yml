@@ -1,0 +1,35 @@
+name: Build and push Docker image
+
+on:
+  push:
+    branches:
+      - main
+      - anhlinh
+      - colas
+      - arthur
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v3
+
+      - name: Se connecter à Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME_BACK }}
+          password: ${{ secrets.DOCKERHUB_TOKEN_BACK }}
+      - name: Build et push de l'image de l'api (backend)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./app/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME_BACK }}/jobless:latest
+          build-args: |
+            AWS_S3_ENDPOINT=${{ vars.AWS_S3_ENDPOINT }}
+            BASE_URL=${{ vars.BASE_URL }}
+            MODEL_NAME=${{ vars.MODEL_NAME }}
+            S3_PATH=${{ vars.S3_PATH }}
