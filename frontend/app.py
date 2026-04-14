@@ -170,7 +170,7 @@ h1, h2, h3 {
 # API -----------------------------------------------------------------------------
 
 API_URL = "https://jobless.lab.sspcloud.fr/analyze/"
-TIMEOUT_SECONDES = 30 
+TIMEOUT_SECONDES = 120 
 
 def appeler_api(texte_offre: str):
     """
