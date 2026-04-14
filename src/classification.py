@@ -60,7 +60,8 @@ def _get_classif_history_connection() -> duckdb.DuckDBPyConnection:
 def read_txt(path: str) -> str:
     """Lit et retourne le contenu d'un fichier texte."""
     fs = s3fs.S3FileSystem(
-        client_kwargs={"endpoint_url": "https://" + os.environ['AWS_S3_ENDPOINT']}
+        client_kwargs={"endpoint_url": "https://" + os.environ['AWS_S3_ENDPOINT']},
+        anon=True
     )
     with fs.open(path) as f:
         return f.read().decode("utf-8")
@@ -247,6 +248,8 @@ def _load_classif_history() -> duckdb.DuckDBPyConnection:
             TYPE S3,
             ENDPOINT '{os.environ["AWS_S3_ENDPOINT"]}',
             URL_STYLE 'path',
+            USE_SSL true,
+            ANONYMOUS true,
             SCOPE '{S3_PATH}'
         );
     """)

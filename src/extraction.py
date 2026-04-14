@@ -61,7 +61,8 @@ def import_model() -> spacy.language.Language:
         spacy.language.Language: Modèle spaCy chargé et prêt à l'emploi.
     """
     fs = s3fs.S3FileSystem(
-        client_kwargs={"endpoint_url": "https://" + os.environ['AWS_S3_ENDPOINT']}
+        client_kwargs={"endpoint_url": "https://" + os.environ['AWS_S3_ENDPOINT']},
+        anon=True
     )
 
     if not os.path.exists(LOCAL_MODEL_PATH):
