@@ -243,17 +243,6 @@ def _load_classif_history() -> duckdb.DuckDBPyConnection:
     """
     con = duckdb.connect()
 
-    con.execute(f"""
-        CREATE OR REPLACE SECRET custom_secret_minio (
-            TYPE S3,
-            ENDPOINT '{os.environ["AWS_S3_ENDPOINT"]}',
-            URL_STYLE 'path',
-            USE_SSL true,
-            ANONYMOUS true,
-            SCOPE '{S3_PATH}'
-        );
-    """)
-
     con.sql(f"""
         CREATE VIEW classif_history AS
         SELECT DISTINCT ON (norm.clean)
