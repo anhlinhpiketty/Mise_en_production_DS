@@ -57,14 +57,15 @@ https://github.com/O-LLM/Free-LLM
 
 ### Variables d'environement à renseigner :
 
-MODEL_SECRET = "__" --> Clé d'accès au
-API_KEY = "_"
+Secret à créer dans kubernetes :
+``
+API_KEY = "" # Clé API pour les call LLM
+``
+
+Variables à créer dans le repo Github :
+``
 BASE_URL = "https://llm.lab.sspcloud.fr/api"
 MODEL_NAME = "gpt-oss:120b"
-TEMPERATURE = "0.5"
 S3_PATH = 's3://colaslepoutre/Classification_compétences_jocas'
-AWS_ACCESS_KEY_ID =
-AWS_SECRET_ACCESS_KEY =
-AWS_SESSION_TOKEN =
-AWS_DEFAULT_REGION = 
 AWS_S3_ENDPOINT = "minio.lab.sspcloud.fr"
+``
