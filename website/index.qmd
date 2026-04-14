@@ -8,9 +8,9 @@ page-layout: custom
 <section class="hero">
   <div class="hero-content">
     <p class="hero-tag">Mise en Production de Projet de Data Science</p>
-    <h1 class="hero-title">Something</h1>
+    <h1 class="hero-title">JobLess</h1>
     <p class="hero-subtitle">
-      Diagnostic automatique des compétences d'une offre d'emploi grâce à une classification par LLM.
+      <span style="font-size:1.1em; font-weight:600;">J</span>ob <span style="font-size:1.1em; font-weight:600;">O</span>ffer <span style="font-size:1.1em; font-weight:600;">B</span>reakdown with <span style="font-size:1.1em; font-weight:600;">L</span>LM <span style="font-size:1.1em; font-weight:600;">E</span>xtraction & <span style="font-size:1.1em; font-weight:600;">S</span>kills <span style="font-size:1.1em; font-weight:600;">S</span>orting
     </p>
     <a href="http://localhost:8501" class="btn-primary" target="_blank">
       Accéder à l'application →
@@ -24,7 +24,7 @@ page-layout: custom
 
     <h2>Le projet</h2>
     <p>
-      Something est un outil de classification automatique des compétences issues d'offres d'emploi. À partir d'un texte brut, il extrait les compétences mentionnées et les classe en grandes catégories grâce à une pipeline de classification par LLM.
+      JobLess est un outil de classification automatique des compétences issues d'offres d'emploi. À partir d'un texte brut, il extrait les compétences mentionnées et les classe en grandes catégories grâce à une pipeline de classification par LLM.
     </p>
 
     <div class="cards">
@@ -91,19 +91,19 @@ page-layout: custom
     <div class="team">
       <div class="team-member">
         <strong>Colas</strong>
-        <span>boss lady</span>
+        <span style="font-size:0.8em">LLM &middot; Classification</span>
       </div>
       <div class="team-member">
         <strong>Arthur</strong>
-        <span>boss lady</span>
+        <span style="font-size:0.8em">DevOps &middot; Déploiement</span>
       </div>
       <div class="team-member">
         <strong>Mateo</strong>
-        <span>boss lady</span>
+        <span style="font-size:0.8em">DevOps &middot; Déploiement</span>
       </div>
       <div class="team-member">
         <strong>Anh Linh</strong>
-        <span>boss lady</span>
+        <span style="font-size:0.8em">Frontend &middot; GitHub Pages</span>
       </div>
     </div>
   </div>
