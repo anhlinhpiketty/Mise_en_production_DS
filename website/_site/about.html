@@ -42,7 +42,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-cf01fbeba83f89a0285f8d21cecd1cc0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-076de336b7c830c58c6d5a8ede0c56c8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -70,6 +70,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="styles.css">
@@ -148,24 +151,63 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>Dépôt principal</strong> — <code>Mise_en_production_DS</code></p>
 <pre><code>Mise_en_production_DS/
 ├── .github/workflows/    # CI/CD : build Docker, tests
-├── config_infer_llm/     # ???
-├── data/                 # à supprimer surement
-├── deployment/           # Fichiers de déploiement 
+├── app/                  # ??
+├── deployment/           # Fichiers de déploiement de l'API
+├── deployment_front/     # Fichiers de déploiement de l'application Streamlit
 ├── frontend/             # Application Streamlit
 │   ├── app.py
-│   ├── Dockerfile
-│   └── requirements.txt
-├── outputs/              # Sorties du modèle
-├── prompts/              # Prompts LLM
+│   └── Dockerfile
+├── notebooks/            # ???
 ├── src/                  # Scripts de classification
 ├── website/              # Ce site (GitHub Pages)
-└── pyproject.toml</code></pre>
+├── pyproject.toml        # Gestion des dépendances
+├── README.md             # Présentation générale du projet
+└── LICENSE               # MIT License</code></pre>
 <p><strong>Dépôt de déploiement</strong> — à venir</p>
 <p><br></p>
 </section>
 <section id="architecture-technique" class="level2">
 <h2 class="anchored" data-anchor-id="architecture-technique">Architecture technique</h2>
-<pre><code>Schéma avec Utilisateur &lt;- Frontend &lt;- API &lt;- Modèle </code></pre>
+<p><br></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph RL
+    %% Style par défaut (bleu clair, coins arrondis, texte gris foncé)
+    classDef plain fill:#fff,stroke:#3b82f6,stroke-width:1.5px,rx:5,ry:5,color:#333;
+
+    subgraph Infrastructure ["Infrastructure"]
+        direction RL
+        M("Modèle ML")
+        A("API (FastAPI)")
+        F("Frontend (Streamlit)")
+    end
+
+    subgraph Client ["Client"]
+        direction RL
+        U("Utilisateur")
+    end
+
+    %% Connexions
+    M --&gt; A
+    A --&gt; F
+    F --&gt; U
+
+    %% Application du style
+    class U,F,A,M plain;
+
+    %% Style des lignes et des groupes
+    linkStyle default stroke:#3b82f6,stroke-width:1.5px;
+    style Client fill:none,stroke:#3b82f6,stroke-width:1.5px,rx:10,ry:10
+    style Infrastructure fill:none,stroke:#3b82f6,stroke-width:1.5px,rx:10,ry:10
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <p><br></p>
 </section>
 <section id="pipeline-de-classification" class="level2">
@@ -242,20 +284,15 @@ Machine Learning, IA générative…
 <section id="cicd" class="level2">
 <h2 class="anchored" data-anchor-id="cicd">CI/CD</h2>
 <p>Le projet utilise <strong>GitHub Actions</strong> pour :</p>
-<ul>
-<li>Build et push automatique de l’image Docker du frontend sur Docker Hub à chaque push sur la branche <code>anhlinh</code></li>
-<li><em>(à venir)</em> Tests automatiques de qualité du code</li>
-<li><em>(à venir)</em> Déploiement automatique sur SSP Cloud via ArgoCD</li>
-</ul>
 <p><br></p>
 </section>
 <section id="déploiement" class="level2">
 <h2 class="anchored" data-anchor-id="déploiement">Déploiement</h2>
-<p>L’application est déployée sur <strong>SSP Cloud</strong> (plateforme de l’INSEE) <em>(insérer lien)</em> :</p>
+<p>L’application est déployée sur <strong>SSP Cloud</strong> :</p>
 <ul>
 <li>Le frontend Streamlit tourne dans un conteneur Docker</li>
 <li>L’API de classification tourne dans un conteneur séparé</li>
-<li>ArgoCD gère le déploiement continu en mode GitOps</li>
+<li>ArgoCD ???</li>
 </ul>
 
 
