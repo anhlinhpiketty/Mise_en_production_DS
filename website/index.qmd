@@ -12,7 +12,7 @@ page-layout: custom
     <p class="hero-subtitle">
       <span style="font-size:1.1em; font-weight:600;">J</span>ob <span style="font-size:1.1em; font-weight:600;">O</span>ffer <span style="font-size:1.1em; font-weight:600;">B</span>reakdown with <span style="font-size:1.1em; font-weight:600;">L</span>LM <span style="font-size:1.1em; font-weight:600;">E</span>xtraction & <span style="font-size:1.1em; font-weight:600;">S</span>kills <span style="font-size:1.1em; font-weight:600;">S</span>orting
     </p>
-    <a href="http://localhost:8501" class="btn-primary" target="_blank">
+    <a href="https://jobless-website.lab.sspcloud.fr/" class="btn-primary" target="_blank">
       Accéder à l'application →
     </a>
   </div>
@@ -88,7 +88,7 @@ page-layout: custom
       </div>
     </div>
     <div style="text-align:center; margin-top: 2rem;">
-      <a href="http://localhost:8501" class="btn-primary" target="_blank">Essayer maintenant →</a>
+      <a href="https://jobless-website.lab.sspcloud.fr/" class="btn-primary" target="_blank">Essayer maintenant →</a>
     </div>
   </div>
 </section>
