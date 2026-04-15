@@ -1,5 +1,8 @@
 # Mise_en_production_DS
 
+## GitHub Pages :
+https://anhlinhpiketty.github.io/Mise_en_production_DS/
+
 ## Idées :
 
  - Faire une API à qui on envoie une description d'offre d'emploi et qui retourne une liste de compétences avec des catégories qu'on a conçu à l'INSEE (genre numérique, soft skill et dans numérique ia, data, infra,...)
