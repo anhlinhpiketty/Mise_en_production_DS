@@ -18,7 +18,7 @@ spec:
       - name: jobless-front
         image: arthurleroudier/jobless_front:latest
         ports:
-        - containerPort: 8000
+        - containerPort: 8080
         env:
                 - name: API_KEY
                   valueFrom:
