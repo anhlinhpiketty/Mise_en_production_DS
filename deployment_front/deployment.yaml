@@ -17,8 +17,9 @@ spec:
       containers:
       - name: jobless-front
         image: arthurleroudier/jobless_front:latest
+        imagePullPolicy: Always
         ports:
-        - containerPort: 8000
+        - containerPort: 8501
         env:
                 - name: FRONT_KEY
                   valueFrom:
