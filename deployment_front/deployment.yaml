@@ -18,10 +18,10 @@ spec:
       - name: jobless-front
         image: arthurleroudier/jobless_front:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 8000
         env:
-                - name: API_KEY
+                - name: FRONT_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: api-jeton
-                      key: API_KEY
+                      name: front-jeton
+                      key: FRONT_KEY

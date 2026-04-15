@@ -3,10 +3,9 @@ kind: Service
 metadata:
   name: jobless-front-service
 spec:
-  type: LoadBalancer
   selector:
     app: jobless-front
   ports:
     - protocol: TCP
-      port: 81
-      targetPort: 8080
+      port: 80
+      targetPort: 8000

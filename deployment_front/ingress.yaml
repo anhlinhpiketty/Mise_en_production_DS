@@ -23,4 +23,4 @@ spec:
           service:
             name: jobless-front-service
             port:
-              number: 81
+              number: 80
