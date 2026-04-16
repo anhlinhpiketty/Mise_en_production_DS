@@ -13,18 +13,18 @@ Le projet est organisé en deux dépôts GitHub distincts :
 ```
 Mise_en_production_DS/
 ├── .github/workflows/    # CI/CD : build Docker, tests
-├── config_infer_llm/     # ???
-├── data/                 # à supprimer surement
-├── deployment/           # Fichiers de déploiement 
+├── app/                  # ??
+├── deployment/           # Fichiers de déploiement de l'API
+├── deployment_front/     # Fichiers de déploiement de l'application Streamlit
 ├── frontend/             # Application Streamlit
 │   ├── app.py
-│   ├── Dockerfile
-│   └── requirements.txt
-├── outputs/              # Sorties du modèle
-├── prompts/              # Prompts LLM
+│   └── Dockerfile
+├── notebooks/            # ???
 ├── src/                  # Scripts de classification
 ├── website/              # Ce site (GitHub Pages)
-└── pyproject.toml
+├── pyproject.toml        # Gestion des dépendances
+├── README.md             # Présentation générale du projet
+└── LICENSE               # MIT License
 ```
 
 **Dépôt de déploiement** — à venir
@@ -33,8 +33,38 @@ Mise_en_production_DS/
 
 ## Architecture technique
 
-```
-Schéma avec Utilisateur <- Frontend <- API <- Modèle 
+<br>
+
+```{mermaid}
+%%| fig-align: center
+graph RL
+    %% Style par défaut (bleu clair, coins arrondis, texte gris foncé)
+    classDef plain fill:#fff,stroke:#3b82f6,stroke-width:1.5px,rx:5,ry:5,color:#333;
+
+    subgraph Infrastructure ["Infrastructure"]
+        direction RL
+        M("Modèle ML")
+        A("API (FastAPI)")
+        F("Frontend (Streamlit)")
+    end
+
+    subgraph Client ["Client"]
+        direction RL
+        U("Utilisateur")
+    end
+
+    %% Connexions
+    M --> A
+    A --> F
+    F --> U
+
+    %% Application du style
+    class U,F,A,M plain;
+
+    %% Style des lignes et des groupes
+    linkStyle default stroke:#3b82f6,stroke-width:1.5px;
+    style Client fill:none,stroke:#3b82f6,stroke-width:1.5px,rx:10,ry:10
+    style Infrastructure fill:none,stroke:#3b82f6,stroke-width:1.5px,rx:10,ry:10
 ```
 
 <br>
@@ -86,16 +116,14 @@ Les compétences sont extraites puis classifiées en plusieurs niveaux :
 
 Le projet utilise **GitHub Actions** pour :
 
-- Build et push automatique de l'image Docker du frontend sur Docker Hub à chaque push sur la branche `anhlinh`
-- *(à venir)* Tests automatiques de qualité du code
-- *(à venir)* Déploiement automatique sur SSP Cloud via ArgoCD
+
 
 <br>
 
 ## Déploiement
 
-L'application est déployée sur **SSP Cloud** (plateforme de l'INSEE) *(insérer lien)* :
+L'application est déployée sur **SSP Cloud** :
 
 - Le frontend Streamlit tourne dans un conteneur Docker
 - L'API de classification tourne dans un conteneur séparé
-- ArgoCD gère le déploiement continu en mode GitOps
+- ArgoCD ???

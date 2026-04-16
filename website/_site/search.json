@@ -4,14 +4,14 @@
     "href": "about.html#structure-des-dépôts",
     "title": "Architecture du projet",
     "section": "Structure des dépôts",
-    "text": "Structure des dépôts\nLe projet est organisé en deux dépôts GitHub distincts :\nDépôt principal — Mise_en_production_DS\nMise_en_production_DS/\n├── .github/workflows/    # CI/CD : build Docker, tests\n├── config_infer_llm/     # ???\n├── data/                 # à supprimer surement\n├── deployment/           # Fichiers de déploiement \n├── frontend/             # Application Streamlit\n│   ├── app.py\n│   ├── Dockerfile\n│   └── requirements.txt\n├── outputs/              # Sorties du modèle\n├── prompts/              # Prompts LLM\n├── src/                  # Scripts de classification\n├── website/              # Ce site (GitHub Pages)\n└── pyproject.toml\nDépôt de déploiement — à venir"
+    "text": "Structure des dépôts\nLe projet est organisé en deux dépôts GitHub distincts :\nDépôt principal — Mise_en_production_DS\nMise_en_production_DS/\n├── .github/workflows/    # CI/CD : build Docker, tests\n├── app/                  # ??\n├── deployment/           # Fichiers de déploiement de l'API\n├── deployment_front/     # Fichiers de déploiement de l'application Streamlit\n├── frontend/             # Application Streamlit\n│   ├── app.py\n│   └── Dockerfile\n├── notebooks/            # ???\n├── src/                  # Scripts de classification\n├── website/              # Ce site (GitHub Pages)\n├── pyproject.toml        # Gestion des dépendances\n├── README.md             # Présentation générale du projet\n└── LICENSE               # MIT License\nDépôt de déploiement — à venir"
   },
   {
     "objectID": "about.html#architecture-technique",
     "href": "about.html#architecture-technique",
     "title": "Architecture du projet",
     "section": "Architecture technique",
-    "text": "Architecture technique\nSchéma avec Utilisateur &lt;- Frontend &lt;- API &lt;- Modèle"
+    "text": "Architecture technique\n\n\n\n\n\n\ngraph RL\n    %% Style par défaut (bleu clair, coins arrondis, texte gris foncé)\n    classDef plain fill:#fff,stroke:#3b82f6,stroke-width:1.5px,rx:5,ry:5,color:#333;\n\n    subgraph Infrastructure [\"Infrastructure\"]\n        direction RL\n        M(\"Modèle ML\")\n        A(\"API (FastAPI)\")\n        F(\"Frontend (Streamlit)\")\n    end\n\n    subgraph Client [\"Client\"]\n        direction RL\n        U(\"Utilisateur\")\n    end\n\n    %% Connexions\n    M --&gt; A\n    A --&gt; F\n    F --&gt; U\n\n    %% Application du style\n    class U,F,A,M plain;\n\n    %% Style des lignes et des groupes\n    linkStyle default stroke:#3b82f6,stroke-width:1.5px;\n    style Client fill:none,stroke:#3b82f6,stroke-width:1.5px,rx:10,ry:10\n    style Infrastructure fill:none,stroke:#3b82f6,stroke-width:1.5px,rx:10,ry:10"
   },
   {
     "objectID": "about.html#pipeline-de-classification",
@@ -25,13 +25,13 @@
     "href": "about.html#cicd",
     "title": "Architecture du projet",
     "section": "CI/CD",
-    "text": "CI/CD\nLe projet utilise GitHub Actions pour :\n\nBuild et push automatique de l’image Docker du frontend sur Docker Hub à chaque push sur la branche anhlinh\n(à venir) Tests automatiques de qualité du code\n(à venir) Déploiement automatique sur SSP Cloud via ArgoCD"
+    "text": "CI/CD\nLe projet utilise GitHub Actions pour :"
   },
   {
     "objectID": "about.html#déploiement",
     "href": "about.html#déploiement",
     "title": "Architecture du projet",
     "section": "Déploiement",
-    "text": "Déploiement\nL’application est déployée sur SSP Cloud (plateforme de l’INSEE) (insérer lien) :\n\nLe frontend Streamlit tourne dans un conteneur Docker\nL’API de classification tourne dans un conteneur séparé\nArgoCD gère le déploiement continu en mode GitOps"
+    "text": "Déploiement\nL’application est déployée sur SSP Cloud :\n\nLe frontend Streamlit tourne dans un conteneur Docker\nL’API de classification tourne dans un conteneur séparé\nArgoCD ???"
   }
 ]
