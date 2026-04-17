@@ -424,17 +424,15 @@ if analyser:
         with st.spinner("Analyse de l'offre..."):
             resultat = appeler_api(offre)
 
-        # st.write(resultat)
-
-        if resultat:
-            resultat_clean = nettoyer_competences(resultat)
-            st.session_state["resultat"] = resultat_clean
-        else:
+        if resultat is None:
             st.error("Impossible d'obtenir un résultat.")
+        else:
+            resultat_clean = nettoyer_competences(resultat)
+            st.session_state["resultat"] = resultat_clean 
 
 # AFFICHAGE ----------------------------------------------------------------------
 
-if "resultat" in st.session_state and st.session_state["resultat"]:
+if "resultat" in st.session_state and st.session_state["resultat"] is not None:
     afficher_resultats(st.session_state["resultat"])
 
 
