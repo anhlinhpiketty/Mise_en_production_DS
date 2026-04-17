@@ -48,7 +48,7 @@ _DUCKDB_CONNECTION = None
 _DUCKDB_lock = threading.Lock()
 
 
-def _get_classif_history_connection() -> duckdb.DuckDBPyConnection:
+def get_classif_history_connection() -> duckdb.DuckDBPyConnection:
     """
     Retourne une connexion DuckDB partagée pour l'historique de classification.
     Crée la connexion si elle n'existe pas encore.
@@ -204,7 +204,7 @@ def classify_from_history(skills: List[str]) -> List[Dict[str, Any]]:
         return []
 
     try:
-        con = _get_classif_history_connection()
+        con = get_classif_history_connection()
     except Exception:
         logger.exception("Impossible d'initialiser la connexion DuckDB")
         return [{"label": s, "categorie": None, "details": None} for s in skills]

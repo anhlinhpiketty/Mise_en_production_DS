@@ -28,13 +28,13 @@ _nlp: spacy.language.Language | None = None
 _nlp_lock = threading.Lock()
 
 
+
 def get_model() -> spacy.language.Language:
     global _nlp
     with _nlp_lock:
         if _nlp is None:
             _nlp = import_model()
     return _nlp
-
 
 def extract_skills_from(desc_offre: str) -> list[str]:
     """

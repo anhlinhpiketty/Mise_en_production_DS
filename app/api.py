@@ -5,8 +5,8 @@ from fastapi import FastAPI
 from starlette.concurrency import run_in_threadpool
 
 from src.logging_config import setup_logging
-from src.classification import classify_llm_first_version
-from src.extraction import extract_skills_from
+from src.classification import classify_llm_first_version, classify, get_classif_history_connection
+from src.extraction import extract_skills_from, get_model
 
 # Setup logging
 setup_logging()
@@ -18,6 +18,9 @@ app = FastAPI(
     + '<br>',
 )
 
+# Setup initial model import and duckdb connection
+get_model()
+get_classif_history_connection()
 
 @app.get("/", tags=["Welcome"])
 def show_welcome_page():
@@ -28,12 +31,12 @@ def show_welcome_page():
     return {
         "Message": "API d'extraction et de classification de compétences issues d'offres d'emploi",
         "Model_name": "NER_LLM_JOCAS",
-        "Model_version": "1.0-llm",
+        "Model_version": "1.0",
     }
 
 @app.get("/analyze", tags=["Analyze"])
 async def analyze(desc_offre: str = "") -> list[dict]:
     logger.info("Requête /analyze reçue (longueur desc: %d)", len(desc_offre))
     skills = await run_in_threadpool(extract_skills_from, desc_offre)
-    classification = await run_in_threadpool(classify_llm_first_version, skills)
+    classification = await run_in_threadpool(classify, skills)
     return classification
