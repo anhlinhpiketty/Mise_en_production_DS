@@ -13,6 +13,9 @@ ENV PATH="/root/.local/bin/:$PATH"
 COPY pyproject.toml .
 RUN uv sync --only-group front
 
+ARG BACKEND_API_URL
+ENV BACKEND_API_URL=$BACKEND_API_URL
+
 # Copie de l'app
 COPY frontend/app.py .
 

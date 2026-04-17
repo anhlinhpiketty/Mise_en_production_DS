@@ -228,14 +228,9 @@ Le frontend est exposé via un **Ingress NGINX** avec :
 
 ### Secrets Kubernetes
 
-Deux secrets doivent être présents dans le namespace avant le premier déploiement :
+Un secret doit être présent dans le namespace avant le premier déploiement :
 
 ```bash
 kubectl create secret generic api-jeton \
   --from-literal=API_KEY='votre_clé_api_llm' \
   -n user-aleroudier
-
-kubectl create secret generic front-jeton \
-  --from-literal=FRONT_KEY='votre_clé_front' \
-  -n user-aleroudier
-```

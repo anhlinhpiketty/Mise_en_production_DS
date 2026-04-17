@@ -184,6 +184,7 @@ Trois workflows GitHub Actions sont configurés :
 | `MODEL_NAME` | `gpt-oss:120b` |
 | `S3_PATH` | `s3://bucket/diffusion/jobless` |
 | `AWS_S3_ENDPOINT` | `minio.lab.sspcloud.fr` |
+| `BACKEND_API_URL` | `https://jobless.lab.sspcloud.fr` |
 
 ---
 
@@ -214,12 +215,6 @@ Push code          Build image Docker          Mise à jour manifeste
 kubectl create secret generic api-jeton \
   --from-literal=API_KEY='votre_clé_api_llm' \
   -n user-aleroudier
-
-# Clé frontend
-kubectl create secret generic front-jeton \
-  --from-literal=FRONT_KEY='votre_clé_front' \
-  -n user-aleroudier
-```
 
 ### URL publique
 
@@ -265,8 +260,4 @@ Le frontend est exposé via un Ingress NGINX avec TLS :
 - [Dépôt GitOps](https://github.com/arthurleroudier/Jobless_deployment)
 - [Free-LLM (O-LLM)](https://github.com/O-LLM/Free-LLM)
 
----
 
-## Licence
-
-Ce projet est distribué sous licence [MIT](LICENSE).

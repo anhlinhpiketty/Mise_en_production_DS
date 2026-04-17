@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import time
+import os
 
 # CONFIG -----------------------------------------------------------------------
 
@@ -169,7 +170,7 @@ h1, h2, h3 {
 
 # API -----------------------------------------------------------------------------
 
-API_URL = "https://jobless.lab.sspcloud.fr/analyze/"
+API_URL = os.environ['BACKEND_API_URL']+"/analyze/"
 TIMEOUT_SECONDES = 120 
 
 def appeler_api(texte_offre: str):
