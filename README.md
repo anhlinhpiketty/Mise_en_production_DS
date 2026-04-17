@@ -215,6 +215,7 @@ Push code          Build image Docker          Mise à jour manifeste
 kubectl create secret generic api-jeton \
   --from-literal=API_KEY='votre_clé_api_llm' \
   -n user-aleroudier
+```
 
 ### URL publique
 
