@@ -28,7 +28,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME_BACK }}/jobless_front
+          images: ${{ secrets.DOCKERHUB_USERNAME_BACK }}/jobless_back
 
       - name: Se connecter à Docker Hub
         uses: docker/login-action@v3
