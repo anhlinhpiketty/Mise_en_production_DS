@@ -14,8 +14,8 @@ import traceback
 import os
 from src.llm import *
 from src.classification import *
-from src.classification import (_get_classif_history_connection)
-from src.extraction import * 
+from src.classification import _get_classif_history_connection
+from src.extraction import *
 
 
 def test_normalize_cases():
@@ -33,19 +33,21 @@ def test_normalize_cases():
 
     """
     cases = {
-        "nominal":           ("Maîtrise d'Excel", "maîtrise d excel"),
-        "html entities":     ("Comp&amp;eacute;tence", "compétence"),
-        "balises html":      ("<b>Python</b> avancé", "python avancé"),
+        "nominal": ("Maîtrise d'Excel", "maîtrise d excel"),
+        "html entities": ("Comp&amp;eacute;tence", "compétence"),
+        "balises html": ("<b>Python</b> avancé", "python avancé"),
         "espaces multiples": ("  Python   avancé  ", "python avancé"),
-        "ponctuation":       ("C++, SQL & NoSQL", "c sql nosql"),
-        "latex":             (r"Algèbre \\textbf{linéaire}", "algèbre linéaire "),
-        "None":              (None, ""),
-        "int":               (42, ""),
-        "chaîne vide":       ("", ""),
+        "ponctuation": ("C++, SQL & NoSQL", "c sql nosql"),
+        "latex": (r"Algèbre \\textbf{linéaire}", "algèbre linéaire "),
+        "None": (None, ""),
+        "int": (42, ""),
+        "chaîne vide": ("", ""),
     }
     for name, (inp, expected) in cases.items():
         result = normalize(inp)
-        assert result.strip() == expected.strip(), f"Erreur normalize: {name}, résultat : {result.strip()}, attendu : {expected.strip()}"
+        assert result.strip() == expected.strip(), (
+            f"Erreur normalize: {name}, résultat : {result.strip()}, attendu : {expected.strip()}"
+        )
 
 
 def test_load_history():
@@ -80,8 +82,12 @@ def test_classify_from_history():
     known = sample["norm_label"].tolist()
     unknown = ["Compétence totalement inconnue XYZ 999"]
     results = classify_from_history(known + unknown)
-    assert results[-1]["categorie"] is None, "Le dernier élément (inconnu) doit avoir une catégorie None."
-    assert all(r["categorie"] is not None for r in results[:-1]), "Tous les éléments connus doivent avoir une catégorie définie."
+    assert results[-1]["categorie"] is None, (
+        "Le dernier élément (inconnu) doit avoir une catégorie None."
+    )
+    assert all(r["categorie"] is not None for r in results[:-1]), (
+        "Tous les éléments connus doivent avoir une catégorie définie."
+    )
 
 
 def test_llm_structure():
@@ -96,24 +102,34 @@ def test_llm_structure():
     skills = [
         "Utilisation de ChatGPT en entreprise",
         "Gestion du stress",
-        "Développement API FastAPI"
+        "Développement API FastAPI",
     ]
     results = classify_from_llm(skills)
-    
-    assert len(results) == len(skills), "Le nombre de résultats ne correspond pas à la liste d'inputs."
-    
+
+    assert len(results) == len(skills), (
+        "Le nombre de résultats ne correspond pas à la liste d'inputs."
+    )
+
     for r in results:
         assert "label" in r, "Claire 'label' manquante dans le résultat."
         assert "categorie" in r, "Claire 'categorie' manquante dans le résultat."
         assert "details" in r, "Claire 'details' manquante dans le résultat."
-        
+
         if r["categorie"] == "compétence numérique":
-            assert r["details"] is not None, "Details devraient être présentes pour 'compétence numérique'."
-            assert "thematique" in r["details"], "Clair 'thematique' manquante dans details."
+            assert r["details"] is not None, (
+                "Details devraient être présentes pour 'compétence numérique'."
+            )
+            assert "thematique" in r["details"], (
+                "Clair 'thematique' manquante dans details."
+            )
             assert "niveau" in r["details"], "Clair 'niveau' manquante dans details."
-            assert "categorie_ia" in r["details"], "Clair 'categorie_ia' manquante dans details."
+            assert "categorie_ia" in r["details"], (
+                "Clair 'categorie_ia' manquante dans details."
+            )
         else:
-            assert r["details"] is None, "Details devraient être None pour d'autres catégories."
+            assert r["details"] is None, (
+                "Details devraient être None pour d'autres catégories."
+            )
 
 
 def test_full_pipeline():
@@ -134,9 +150,13 @@ def test_full_pipeline():
         "Communication interpersonnelle",
     ]
     results = classify(skills)
-    assert len(results) == len(skills), "Nombre de résultats inattendu pour le pipeline complet."
+    assert len(results) == len(skills), (
+        "Nombre de résultats inattendu pour le pipeline complet."
+    )
     for r in results:
-        assert r["categorie"] is not None, "Chaque compétence doit obtenir une catégorie dans le pipeline complet."
+        assert r["categorie"] is not None, (
+            "Chaque compétence doit obtenir une catégorie dans le pipeline complet."
+        )
 
 
 def run_test(name, func):

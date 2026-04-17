@@ -4,35 +4,38 @@ title: "Architecture du projet"
 
 <br>
 
-## Structure du dépôt
+## Structure des dépôts
 
-Le projet est organisé dans un dépôt GitHub unique :
+Le projet est réparti sur **deux dépôts GitHub** avec des responsabilités distinctes :
 
-**Dépôt principal** — `Mise_en_production_DS`
+**Dépôt applicatif** — `Mise_en_production_DS`
 
 ```
 Mise_en_production_DS/
-├── .github/
-│   └── workflows/
-│       ├── deploy_pages.yml     # Build & déploiement GitHub Pages
-│       ├── docker_back.yml      # Build & push image Docker backend
-│       └── docker_front.yml     # Build & push image Docker frontend
-├── app/
-│   ├── api.py                   # API FastAPI (endpoint /analyze)
-│   ├── Dockerfile               # Image Docker du backend
-│   └── run.sh                   # Script de démarrage uvicorn
-├── frontend/
-│   ├── app.py                   # Interface Streamlit
-│   └── Dockerfile               # Image Docker du frontend
-├── src/
-│   ├── classification.py        # Pipeline de classification LLM
-│   ├── extraction.py            # Extraction NER via spaCy
-│   ├── llm.py                   # Client LLM (API compatible OpenAI)
-│   └── logging_config.py        # Configuration du logging
-├── notebooks/                   # Expérimentations et tests
+├── .github/workflows/           # CI/CD : build Docker, déploiement Pages
+├── app/                         # API FastAPI + Dockerfile backend
+├── frontend/                    # Application Streamlit + Dockerfile frontend
+├── src/                         # Modules Python (extraction, classification, LLM)
+├── notebooks/                   # Expérimentations
 ├── website/                     # Ce site (GitHub Pages)
 ├── pyproject.toml               # Gestion des dépendances (uv)
-└── LICENSE                      # MIT License
+└── LICENSE
+```
+
+**Dépôt GitOps** — `Jobless_deployment`
+
+```
+Jobless_deployment/
+├── application_backend.yaml     # Application ArgoCD — backend
+├── application_frontend.yaml    # Application ArgoCD — frontend
+├── deployment/                  # Manifestes Kubernetes — Backend (FastAPI)
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   └── ingress.yaml
+└── deployment_front/            # Manifestes Kubernetes — Frontend (Streamlit)
+    ├── deployment.yaml
+    ├── service.yaml
+    └── ingress.yaml
 ```
 
 <br>
@@ -46,24 +49,25 @@ Mise_en_production_DS/
 graph LR
     classDef plain fill:#fff,stroke:#3b82f6,stroke-width:1.5px,rx:5,ry:5,color:#333;
     classDef store fill:#f0f9ff,stroke:#3b82f6,stroke-width:1.5px,rx:5,ry:5,color:#333;
+    classDef gitops fill:#f0fdf4,stroke:#22c55e,stroke-width:1.5px,rx:5,ry:5,color:#333;
 
     subgraph Stockage ["Stockage (S3 / MinIO)"]
         direction TB
-        NER("Modèle NER\n(spaCy)")
-        HIST("Historique\nclassifications\n(CSV)")
-        PROMPTS("Prompts\nLLM")
+        NER("Modèle NER<br/>(spaCy)")
+        HIST("Historique<br/>classifications")
+        PROMPTS("Prompts LLM")
     end
 
     subgraph Backend ["Backend (FastAPI)"]
         direction TB
-        EXT("Extraction\ncompétences")
-        CACHE("Cache\nDuckDB")
-        LLM("Appels\nLLM")
-        CLASSIF("Classification\n4 niveaux")
+        EXT("Extraction NER")
+        CACHE("Cache DuckDB")
+        LLM("Appels LLM")
+        CLASSIF("Classification<br/>4 niveaux")
     end
 
     subgraph Frontend ["Frontend (Streamlit)"]
-        UI("Interface\nutilisateur")
+        UI("Interface<br/>utilisateur")
     end
 
     U("Utilisateur")
@@ -89,7 +93,7 @@ graph LR
 
 ## Pipeline de classification
 
-Les compétences sont d'abord extraites par le modèle NER (CamemBERTa-v2 via spaCy), puis classifiées en plusieurs niveaux par LLM. Un cache DuckDB alimenté par l'historique JOCAS 2019–2025 permet d'éviter les appels redondants pour des compétences déjà connues.
+Les compétences sont d'abord extraites par le modèle NER (CamemBERTa-v2 via spaCy), puis classifiées en plusieurs niveaux par LLM. Un cache DuckDB alimenté par l'historique JOCAS 2019–2025 évite les appels redondants pour des compétences déjà connues.
 
 <table>
   <thead>
@@ -140,7 +144,7 @@ GET /analyze?desc_offre=<texte de l'offre>
 
 Elle retourne une liste d'objets JSON, un par compétence extraite, avec l'ensemble des niveaux de classification. La documentation interactive est accessible sur `/docs`.
 
-Le backend utilise [`run_in_threadpool`](https://www.starlette.io/concurrency/) de Starlette pour ne pas bloquer la boucle d'événements FastAPI lors des appels synchrones au modèle spaCy et au LLM.
+Le backend utilise `run_in_threadpool` de Starlette pour ne pas bloquer la boucle d'événements FastAPI lors des appels synchrones au modèle spaCy et au LLM.
 
 <br>
 
@@ -175,19 +179,63 @@ Le projet utilise **GitHub Actions** pour trois workflows automatisés :
   </tbody>
 </table>
 
-Les images Docker sont construites avec **Docker Buildx** (support multi-plateformes) et publiées sur Docker Hub. Les variables de configuration (URL LLM, chemin S3, nom de modèle) sont injectées comme `build-args` lors du build du backend.
+Les images Docker sont construites avec **Docker Buildx** et publiées sur Docker Hub. Les variables de configuration (URL LLM, chemin S3, nom de modèle) sont injectées comme `build-args` lors du build du backend.
 
 <br>
 
-## Déploiement
+## Déploiement GitOps
 
-L'application est déployée sur **SSP Cloud** :
+L'infrastructure de production est gérée selon une approche **GitOps** : le dépôt [`Jobless_deployment`](https://github.com/arthurleroudier/Jobless_deployment) est la source de vérité des manifestes Kubernetes, et **ArgoCD** se charge de maintenir le cluster SSP Cloud en conformité avec cet état.
 
-- Le **frontend Streamlit** tourne dans un conteneur Docker exposé sur le port `8501`
-- L'**API FastAPI** tourne dans un conteneur séparé, démarré via `uvicorn` avec le script `app/run.sh`
-- Le **modèle spaCy** et les **données historiques** sont stockés sur un bucket S3 (MinIO SSPCloud) et téléchargés au démarrage du backend
-- La **clé API LLM** est injectée via un secret Kubernetes (`api-jeton`)
+```{mermaid}
+%%| fig-align: center
+graph LR
+    classDef plain fill:#fff,stroke:#3b82f6,stroke-width:1.5px,rx:5,ry:5,color:#333;
+    classDef green fill:#f0fdf4,stroke:#22c55e,stroke-width:1.5px,rx:5,ry:5,color:#333;
+
+    DEV("Push code\nMise_en_production_DS")
+    CI("GitHub Actions\nBuild & push Docker")
+    HUB("Docker Hub\narthurleroudier/jobless\narthurleroudier/jobless_front")
+    GITOPS("Jobless_deployment\nmanifestes K8s")
+    ARGO("ArgoCD\nselfHeal: true")
+    K8S("Cluster K8s\nSSP Cloud")
+
+    DEV --> CI --> HUB
+    HUB -.->|"Mise à jour\ndu tag d'image"| GITOPS
+    GITOPS --> ARGO --> K8S
+
+    class DEV,CI,HUB plain;
+    class GITOPS,ARGO green;
+    class K8S plain;
+    linkStyle default stroke:#3b82f6,stroke-width:1.5px;
+```
+
+### Deux applications ArgoCD
+
+| Application | Composant | Image | Namespace |
+|---|---|---|---|
+| `jobless-backend` | API FastAPI (port 8000) | `arthurleroudier/jobless` | `user-aleroudier` |
+| `jobless-frontend` | Streamlit (port 8501) | `arthurleroudier/jobless_front` | `user-aleroudier` |
+
+Les deux applications ont `syncPolicy.automated.selfHeal: true` : si l'état du cluster dérive des manifestes (redémarrage, modification manuelle…), ArgoCD corrige automatiquement sans intervention humaine.
+
+### Ingress et accès public
+
+Le frontend est exposé via un **Ingress NGINX** avec :
+
+- TLS activé sur `jobless-website.lab.sspcloud.fr`
+- CORS configuré pour autoriser les appels cross-origin depuis le frontend vers l'API
+
+### Secrets Kubernetes
+
+Deux secrets doivent être présents dans le namespace avant le premier déploiement :
 
 ```bash
-kubectl create secret generic api-jeton --from-literal=API_KEY='votre_clé_api'
+kubectl create secret generic api-jeton \
+  --from-literal=API_KEY='votre_clé_api_llm' \
+  -n user-aleroudier
+
+kubectl create secret generic front-jeton \
+  --from-literal=FRONT_KEY='votre_clé_front' \
+  -n user-aleroudier
 ```

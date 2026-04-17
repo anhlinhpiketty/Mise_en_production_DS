@@ -58,35 +58,25 @@ Mise_en_production_DS/
 │       ├── deploy_pages.yml   # Build & déploiement GitHub Pages (Quarto)
 │       ├── docker_back.yml    # Build & push image Docker backend
 │       └── docker_front.yml   # Build & push image Docker frontend
-│
 ├── app/
 │   ├── api.py                 # API FastAPI (endpoint /analyze)
 │   ├── Dockerfile             # Image Docker du backend
 │   └── run.sh                 # Script de démarrage uvicorn
-│
 ├── frontend/
 │   ├── app.py                 # Interface Streamlit
 │   └── Dockerfile             # Image Docker du frontend
-│
 ├── src/
 │   ├── classification.py      # Pipeline de classification LLM (4 niveaux)
 │   ├── extraction.py          # Extraction NER via spaCy
 │   ├── llm.py                 # Client LLM (API compatible OpenAI)
 │   └── logging_config.py      # Configuration du logging
-│
 ├── notebooks/
-│   ├── test.ipynb             # Tests et expérimentations NER
-│   └── test_classification.ipynb  # Tests de la classification
-│
+│   ├── test.ipynb
+│   └── test_classification.ipynb
 ├── website/                   # Site de documentation (Quarto → GitHub Pages)
-│   ├── index.qmd
-│   ├── about.qmd
-│   ├── _quarto.yml
-│   └── styles.css
-│
 ├── pyproject.toml             # Dépendances (gérées avec uv)
 ├── install.sh                 # Script d'installation locale
-└── LICENSE                    # MIT
+└── LICENSE
 ```
 
 ---
@@ -101,14 +91,9 @@ Mise_en_production_DS/
 ### Étapes
 
 ```bash
-# Cloner le dépôt
 git clone https://github.com/anhlinhpiketty/Mise_en_production_DS.git
 cd Mise_en_production_DS
-
-# Installer les dépendances
-./install.sh
-# ou manuellement :
-uv sync
+./install.sh   # ou : uv sync
 ```
 
 ### Variables d'environnement
@@ -132,9 +117,8 @@ TEMPERATURE=0.0
 
 ```bash
 uv run uvicorn app.api:app --reload
+# Docs interactives : http://localhost:8000/docs
 ```
-
-L'API est disponible sur `http://localhost:8000`. Documentation interactive : `http://localhost:8000/docs`.
 
 **Endpoint principal :**
 
@@ -142,15 +126,12 @@ L'API est disponible sur `http://localhost:8000`. Documentation interactive : `h
 GET /analyze?desc_offre=<texte de l'offre>
 ```
 
-Retourne une liste de compétences classifiées au format JSON.
-
 ### Frontend (Streamlit)
 
 ```bash
 uv run streamlit run frontend/app.py
+# Interface : http://localhost:8501
 ```
-
-Interface disponible sur `http://localhost:8501`.
 
 ---
 
@@ -197,28 +178,53 @@ Trois workflows GitHub Actions sont configurés :
 
 ### Variables GitHub requises
 
-| Variable | Description | Exemple |
-|---|---|---|
-| `BASE_URL` | URL de base de l'API LLM | `https://llm.lab.sspcloud.fr/api` |
-| `MODEL_NAME` | Nom du modèle LLM | `gpt-oss:120b` |
-| `S3_PATH` | Chemin du bucket S3 | `s3://bucket/diffusion/jobless` |
-| `AWS_S3_ENDPOINT` | Endpoint MinIO | `minio.lab.sspcloud.fr` |
-
-### Secret Kubernetes (déploiement SSP Cloud)
-
-```bash
-kubectl create secret generic api-jeton --from-literal=API_KEY='votre_clé_api_llm'
-```
+| Variable | Exemple |
+|---|---|
+| `BASE_URL` | `https://llm.lab.sspcloud.fr/api` |
+| `MODEL_NAME` | `gpt-oss:120b` |
+| `S3_PATH` | `s3://bucket/diffusion/jobless` |
+| `AWS_S3_ENDPOINT` | `minio.lab.sspcloud.fr` |
 
 ---
 
-## Déploiement sur SSP Cloud
+## Déploiement GitOps (ArgoCD)
 
-L'application est déployée sur **SSP Cloud** :
+Le déploiement sur **SSP Cloud** est entièrement géré via une approche GitOps dans un dépôt dédié : [`Jobless_deployment`](https://github.com/arthurleroudier/Jobless_deployment).
 
-- L'API FastAPI tourne dans un conteneur Docker dédié
-- Le frontend Streamlit tourne dans un conteneur séparé
-- Les images sont publiées sur Docker Hub via GitHub Actions à chaque push
+### Principe
+
+ArgoCD surveille le dépôt `Jobless_deployment` en continu. Tout changement de manifeste Kubernetes sur `main` est automatiquement appliqué sur le cluster (`selfHeal: true`). Le dépôt est la **source de vérité** de l'état de l'infrastructure.
+
+```
+Push code          Build image Docker          Mise à jour manifeste
+(ce repo)  ──►    (GitHub Actions)    ──►    (Jobless_deployment)   ──►   ArgoCD   ──►   K8s
+```
+
+### Applications ArgoCD
+
+| Application | Composant | Image Docker | Namespace |
+|---|---|---|---|
+| `jobless-backend` | API FastAPI — port `8000` | `arthurleroudier/jobless` | `user-aleroudier` |
+| `jobless-frontend` | Streamlit — port `8501` | `arthurleroudier/jobless_front` | `user-aleroudier` |
+
+### Secrets Kubernetes requis
+
+```bash
+# Clé API LLM (backend)
+kubectl create secret generic api-jeton \
+  --from-literal=API_KEY='votre_clé_api_llm' \
+  -n user-aleroudier
+
+# Clé frontend
+kubectl create secret generic front-jeton \
+  --from-literal=FRONT_KEY='votre_clé_front' \
+  -n user-aleroudier
+```
+
+### URL publique
+
+Le frontend est exposé via un Ingress NGINX avec TLS :
+**[https://jobless-website.lab.sspcloud.fr](https://jobless-website.lab.sspcloud.fr)**
 
 ---
 
@@ -230,10 +236,13 @@ L'application est déployée sur **SSP Cloud** :
 | Classification | LLM via API compatible OpenAI |
 | Cache compétences | [DuckDB](https://duckdb.org/) |
 | Stockage modèle/données | S3 (MinIO / SSP Cloud) |
-| API | [FastAPI](https://fastapi.tiangolo.com/) + [uvicorn](https://www.uvicorn.org/) |
+| API | [FastAPI](https://fastapi.tiangolo.com/) + uvicorn |
 | Interface | [Streamlit](https://streamlit.io/) |
 | Gestion dépendances | [uv](https://github.com/astral-sh/uv) |
+| Conteneurisation | Docker |
 | CI/CD | GitHub Actions |
+| Orchestration | Kubernetes (SSP Cloud) |
+| Déploiement continu | ArgoCD (GitOps) |
 | Documentation | [Quarto](https://quarto.org/) → GitHub Pages |
 
 ---
@@ -253,7 +262,7 @@ L'application est déployée sur **SSP Cloud** :
 
 - [Application en ligne](https://jobless-website.lab.sspcloud.fr/)
 - [Site de documentation](https://anhlinhpiketty.github.io/Mise_en_production_DS/)
-- [Offres Data Scientist — France Travail](https://candidat.francetravail.fr/offres/emploi/data-scientist/s28m15)
+- [Dépôt GitOps](https://github.com/arthurleroudier/Jobless_deployment)
 - [Free-LLM (O-LLM)](https://github.com/O-LLM/Free-LLM)
 
 ---
