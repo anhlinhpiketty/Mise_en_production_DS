@@ -28,7 +28,7 @@ def show_welcome_page():
     return {
         "Message": "API d'extraction et de classification de compétences issues d'offres d'emploi",
         "Model_name": "NER_LLM_JOCAS",
-        "Model_version": "1.0",
+        "Model_version": "1.0-llm",
     }
 
 @app.get("/analyze", tags=["Analyze"])
