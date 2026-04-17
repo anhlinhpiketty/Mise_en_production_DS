@@ -397,7 +397,7 @@ def nettoyer_competences(data):
 
 # INTERFACE ----------------------------------------------------------------------
 
-st.markdown('<p class="main-title">🔍 JobLess</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-title">🔍 JobLess (version 1.0)</p>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle"><span style="font-weight:600;">J</span>ob <span style="font-weight:600;">O</span>ffer <span style="font-weight:600;">B</span>reakdown with <span style="font-weight:600;">L</span>LM <span style="font-weight:600;">E</span>xtraction & <span style="font-weight:600;">S</span>kills <span style="font-weight:600;">S</span>orting</p>', unsafe_allow_html=True)
 
 offre = st.text_area(
