@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = "==3.13.11"
-dependencies = [
+
+[dependency-groups]
+back = [
     "bs4>=0.0.2",
     "dotenv>=0.9.9",
     "duckdb>=1.4.4",
@@ -12,18 +14,27 @@ dependencies = [
     "logging>=0.4.9.6",
     "openai>=2.30.0",
     "pandas>=3.0.0",
-    "pylint>=4.0.5",
     "python-dotenv>=1.2.1",
-    "requests==2.28.1",
-    "ruff>=0.15.9",
     "s3fs>=2023.12.0",
     "scikit-learn>=1.8.0",
     "skops>=0.13.0",
     "spacy[transformers]>=3.8.14",
-    "streamlit>=1.56.0",
     "uvicorn>=0.40.0",
     "torch"
 ]
+front = [
+    "streamlit>=1.56.0",
+    "requests==2.28.1",
+]
+dev = [
+    {include-group = "back"},
+    {include-group = "front"}
+    "pylint>=4.0.5",
+    "ruff>=0.15.9",
+]
+
+[tool.uv]
+default-groups = "all"
 
 [[tool.uv.index]]
 name = "pytorch-cpu"

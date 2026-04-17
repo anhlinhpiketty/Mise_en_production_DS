@@ -10,7 +10,7 @@ COPY app ./app
 COPY src ./src
 
 COPY pyproject.toml .
-RUN uv sync
+RUN uv sync --only-group back
 RUN uv pip install -e .
 
 ARG AWS_S3_ENDPOINT BASE_URL MODEL_NAME S3_PATH

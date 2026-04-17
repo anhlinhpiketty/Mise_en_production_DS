@@ -11,7 +11,7 @@ ENV PATH="/root/.local/bin/:$PATH"
 # Installation
 
 COPY pyproject.toml .
-RUN uv sync 
+RUN uv sync --only-group front
 
 # Copie de l'app
 COPY frontend/app.py .
