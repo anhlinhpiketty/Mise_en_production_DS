@@ -63,8 +63,8 @@ def _get_classif_history_connection() -> duckdb.DuckDBPyConnection:
 def read_txt(path: str) -> str:
     """Lit et retourne le contenu d'un fichier texte."""
     fs = s3fs.S3FileSystem(
-        client_kwargs={"endpoint_url": "https://" + os.environ['AWS_S3_ENDPOINT']},
-        anon=True
+        client_kwargs={"endpoint_url": "https://" + os.environ["AWS_S3_ENDPOINT"]},
+        anon=True,
     )
     with fs.open(path) as f:
         return f.read().decode("utf-8")
@@ -122,6 +122,25 @@ def classify(skills: List[str]) -> List[Dict[str, Any]]:
             if output["categorie"] is None:
                 outputs[k] = next(remaining_iter)
 
+    return outputs
+
+
+def classify_llm_first_version(skills: List[str]) -> List[Dict[str, Any]]:
+    """
+    Classifie une liste de compétences en combinant historique et LLM mais
+    en passant d'abord par des appels au LLM pour améliorer la vitesse de traitement.
+    """
+    if not isinstance(skills, list):
+        logger.warning("classify() appelé avec un type invalide : %s", type(skills))
+        return []
+    try:
+        logging.info("Classification de %d compétence(s) avec un LLM", len(skills))
+        outputs = classify_from_llm(skills)
+    except Exception:
+        logging.warning(
+            "Échec de la classification avec un LLM, report sur la méthode exploitant l'historique des classifications"
+        )
+        outputs = classify_from_history(skills)
     return outputs
 
 
@@ -198,7 +217,8 @@ def classify_from_history(skills: List[str]) -> List[Dict[str, Any]]:
 
     try:
         # Une seule requête pour toutes les compétences
-        result_df = con.execute("""
+        result_df = con.execute(
+            """
             SELECT
                 norm_label,
                 num_entree,
@@ -208,12 +228,13 @@ def classify_from_history(skills: List[str]) -> List[Dict[str, Any]]:
                 ia_cat
             FROM classif_history
             WHERE norm_label = ANY(?)
-        """, [normalized_list]).df()
+        """,
+            [normalized_list],
+        ).df()
 
         # Index des résultats par norm_label pour lookup O(1)
         found: Dict[str, Any] = {
-            row["norm_label"]: row
-            for _, row in result_df.iterrows()
+            row["norm_label"]: row for _, row in result_df.iterrows()
         }
 
     except Exception:
@@ -238,11 +259,13 @@ def classify_from_history(skills: List[str]) -> List[Dict[str, Any]]:
             if is_num
             else None
         )
-        output.append({
-            "label": row["num_entree"],
-            "categorie": row["num_cat"],
-            "details": details,
-        })
+        output.append(
+            {
+                "label": row["num_entree"],
+                "categorie": row["num_cat"],
+                "details": details,
+            }
+        )
 
     return output
 
@@ -257,7 +280,6 @@ def _load_classif_history() -> duckdb.DuckDBPyConnection:
     con.execute("SET s3_url_style='path'")
     con.execute("SET s3_use_ssl=true")
     con.execute(f"SET s3_endpoint='{os.environ['AWS_S3_ENDPOINT']}'")
-
 
     con.sql(f"""
         CREATE TABLE classif_history AS
