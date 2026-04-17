@@ -24,13 +24,13 @@ back = [
 ]
 front = [
     "streamlit>=1.56.0",
-    "requests==2.28.1",
+    "requests==2.28.1"
 ]
 dev = [
     {include-group = "back"},
-    {include-group = "front"}
+    {include-group = "front"},
     "pylint>=4.0.5",
-    "ruff>=0.15.9",
+    "ruff>=0.15.9"
 ]
 
 [tool.uv]

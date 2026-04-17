@@ -693,7 +693,26 @@ wheels = [
 name = "mise-en-production-ds"
 version = "0.1.0"
 source = { virtual = "." }
-dependencies = [
+
+[package.dev-dependencies]
+back = [
+    { name = "bs4" },
+    { name = "dotenv" },
+    { name = "duckdb" },
+    { name = "fastapi" },
+    { name = "logging" },
+    { name = "openai" },
+    { name = "pandas" },
+    { name = "python-dotenv" },
+    { name = "s3fs" },
+    { name = "scikit-learn" },
+    { name = "skops" },
+    { name = "spacy", extra = ["transformers"] },
+    { name = "torch", version = "2.11.0", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform == 'darwin'" },
+    { name = "torch", version = "2.11.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin'" },
+    { name = "uvicorn" },
+]
+dev = [
     { name = "bs4" },
     { name = "dotenv" },
     { name = "duckdb" },
@@ -714,9 +733,31 @@ dependencies = [
     { name = "torch", version = "2.11.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin'" },
     { name = "uvicorn" },
 ]
+front = [
+    { name = "requests" },
+    { name = "streamlit" },
+]
 
 [package.metadata]
-requires-dist = [
+
+[package.metadata.requires-dev]
+back = [
+    { name = "bs4", specifier = ">=0.0.2" },
+    { name = "dotenv", specifier = ">=0.9.9" },
+    { name = "duckdb", specifier = ">=1.4.4" },
+    { name = "fastapi", specifier = ">=0.128.7" },
+    { name = "logging", specifier = ">=0.4.9.6" },
+    { name = "openai", specifier = ">=2.30.0" },
+    { name = "pandas", specifier = ">=3.0.0" },
+    { name = "python-dotenv", specifier = ">=1.2.1" },
+    { name = "s3fs", specifier = ">=2023.12.0" },
+    { name = "scikit-learn", specifier = ">=1.8.0" },
+    { name = "skops", specifier = ">=0.13.0" },
+    { name = "spacy", extras = ["transformers"], specifier = ">=3.8.14" },
+    { name = "torch", index = "https://download.pytorch.org/whl/cpu" },
+    { name = "uvicorn", specifier = ">=0.40.0" },
+]
+dev = [
     { name = "bs4", specifier = ">=0.0.2" },
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "duckdb", specifier = ">=1.4.4" },
@@ -735,6 +776,10 @@ requires-dist = [
     { name = "streamlit", specifier = ">=1.56.0" },
     { name = "torch", index = "https://download.pytorch.org/whl/cpu" },
     { name = "uvicorn", specifier = ">=0.40.0" },
+]
+front = [
+    { name = "requests", specifier = "==2.28.1" },
+    { name = "streamlit", specifier = ">=1.56.0" },
 ]
 
 [[package]]
