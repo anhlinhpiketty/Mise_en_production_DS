@@ -193,15 +193,15 @@ graph LR
     classDef plain fill:#fff,stroke:#3b82f6,stroke-width:1.5px,rx:5,ry:5,color:#333;
     classDef green fill:#f0fdf4,stroke:#22c55e,stroke-width:1.5px,rx:5,ry:5,color:#333;
 
-    DEV("Push code\nMise_en_production_DS")
-    CI("GitHub Actions\nBuild & push Docker")
-    HUB("Docker Hub\narthurleroudier/jobless\narthurleroudier/jobless_front")
-    GITOPS("Jobless_deployment\nmanifestes K8s")
-    ARGO("ArgoCD\nselfHeal: true")
-    K8S("Cluster K8s\nSSP Cloud")
+    DEV("Push code<br/>Mise_en_production_DS")
+    CI("GitHub Actions<br/>Build & push Docker")
+    HUB("Docker Hub<br/>arthurleroudier/jobless<br/>arthurleroudier/jobless_front")
+    GITOPS("Jobless_deployment<br/>manifestes K8s")
+    ARGO("ArgoCD<br/>selfHeal: true")
+    K8S("Cluster K8s<br/>SSP Cloud")
 
     DEV --> CI --> HUB
-    HUB -.->|"Mise à jour\ndu tag d'image"| GITOPS
+    HUB -.->|"Mise à jour<br/>du tag d'image"| GITOPS
     GITOPS --> ARGO --> K8S
 
     class DEV,CI,HUB plain;
