@@ -4,30 +4,36 @@ title: "Architecture du projet"
 
 <br>
 
-## Structure des dépôts
+## Structure du dépôt
 
-Le projet est organisé en deux dépôts GitHub distincts :
+Le projet est organisé dans un dépôt GitHub unique :
 
 **Dépôt principal** — `Mise_en_production_DS`
 
 ```
 Mise_en_production_DS/
-├── .github/workflows/    # CI/CD : build Docker, tests
-├── app/                  # ??
-├── deployment/           # Fichiers de déploiement de l'API
-├── deployment_front/     # Fichiers de déploiement de l'application Streamlit
-├── frontend/             # Application Streamlit
-│   ├── app.py
-│   └── Dockerfile
-├── notebooks/            # ???
-├── src/                  # Scripts de classification
-├── website/              # Ce site (GitHub Pages)
-├── pyproject.toml        # Gestion des dépendances
-├── README.md             # Présentation générale du projet
-└── LICENSE               # MIT License
+├── .github/
+│   └── workflows/
+│       ├── deploy_pages.yml     # Build & déploiement GitHub Pages
+│       ├── docker_back.yml      # Build & push image Docker backend
+│       └── docker_front.yml     # Build & push image Docker frontend
+├── app/
+│   ├── api.py                   # API FastAPI (endpoint /analyze)
+│   ├── Dockerfile               # Image Docker du backend
+│   └── run.sh                   # Script de démarrage uvicorn
+├── frontend/
+│   ├── app.py                   # Interface Streamlit
+│   └── Dockerfile               # Image Docker du frontend
+├── src/
+│   ├── classification.py        # Pipeline de classification LLM
+│   ├── extraction.py            # Extraction NER via spaCy
+│   ├── llm.py                   # Client LLM (API compatible OpenAI)
+│   └── logging_config.py        # Configuration du logging
+├── notebooks/                   # Expérimentations et tests
+├── website/                     # Ce site (GitHub Pages)
+├── pyproject.toml               # Gestion des dépendances (uv)
+└── LICENSE                      # MIT License
 ```
-
-**Dépôt de déploiement** — à venir
 
 <br>
 
@@ -37,41 +43,53 @@ Mise_en_production_DS/
 
 ```{mermaid}
 %%| fig-align: center
-graph RL
-    %% Style par défaut (bleu clair, coins arrondis, texte gris foncé)
+graph LR
     classDef plain fill:#fff,stroke:#3b82f6,stroke-width:1.5px,rx:5,ry:5,color:#333;
+    classDef store fill:#f0f9ff,stroke:#3b82f6,stroke-width:1.5px,rx:5,ry:5,color:#333;
 
-    subgraph Infrastructure ["Infrastructure"]
-        direction RL
-        M("Modèle ML")
-        A("API (FastAPI)")
-        F("Frontend (Streamlit)")
+    subgraph Stockage ["Stockage (S3 / MinIO)"]
+        direction TB
+        NER("Modèle NER\n(spaCy)")
+        HIST("Historique\nclassifications\n(CSV)")
+        PROMPTS("Prompts\nLLM")
     end
 
-    subgraph Client ["Client"]
-        direction RL
-        U("Utilisateur")
+    subgraph Backend ["Backend (FastAPI)"]
+        direction TB
+        EXT("Extraction\ncompétences")
+        CACHE("Cache\nDuckDB")
+        LLM("Appels\nLLM")
+        CLASSIF("Classification\n4 niveaux")
     end
 
-    %% Connexions
-    M --> A
-    A --> F
-    F --> U
+    subgraph Frontend ["Frontend (Streamlit)"]
+        UI("Interface\nutilisateur")
+    end
 
-    %% Application du style
-    class U,F,A,M plain;
+    U("Utilisateur")
 
-    %% Style des lignes et des groupes
+    NER --> EXT
+    HIST --> CACHE
+    PROMPTS --> LLM
+    EXT --> CACHE
+    CACHE --> LLM
+    LLM --> CLASSIF
+    CLASSIF --> UI
+    UI --> U
+
+    class U,UI,EXT,CACHE,LLM,CLASSIF plain;
+    class NER,HIST,PROMPTS store;
     linkStyle default stroke:#3b82f6,stroke-width:1.5px;
-    style Client fill:none,stroke:#3b82f6,stroke-width:1.5px,rx:10,ry:10
-    style Infrastructure fill:none,stroke:#3b82f6,stroke-width:1.5px,rx:10,ry:10
+    style Stockage fill:none,stroke:#94a3b8,stroke-width:1.5px,rx:10,ry:10
+    style Backend fill:none,stroke:#3b82f6,stroke-width:1.5px,rx:10,ry:10
+    style Frontend fill:none,stroke:#3b82f6,stroke-width:1.5px,rx:10,ry:10
 ```
 
 <br>
 
 ## Pipeline de classification
 
-Les compétences sont extraites puis classifiées en plusieurs niveaux :
+Les compétences sont d'abord extraites par le modèle NER (CamemBERTa-v2 via spaCy), puis classifiées en plusieurs niveaux par LLM. Un cache DuckDB alimenté par l'historique JOCAS 2019–2025 permet d'éviter les appels redondants pour des compétences déjà connues.
 
 <table>
   <thead>
@@ -85,38 +103,79 @@ Les compétences sont extraites puis classifiées en plusieurs niveaux :
     <tr>
       <td style="padding: 8px;">1er</td>
       <td style="padding: 8px;">Type de compétence</td>
-      <td style="padding: 8px;">Soft Skill, Compétence numérique, Compétence non numérique, Domaine/Secteur, Certification</td>
+      <td style="padding: 8px;">Soft Skill, Compétence numérique, Compétence non numérique, Domaine / Secteur, Certification / Formation</td>
     </tr>
     <tr>
       <td colspan="3" style="padding: 20px 8px 10px 8px; border: none; font-weight: normal; font-size: 1rem;">
-        Si numérique :
+        Si <strong>Compétence numérique</strong> :
       </td>
     </tr>
     <tr>
       <td style="padding: 8px;">2e</td>
-      <td style="padding: 8px;">Thématique</td>
-      <td style="padding: 8px;">Données & IA, Dev applicatif, Infrastructure...</td>
+      <td style="padding: 8px;">Thématique numérique</td>
+      <td style="padding: 8px;">Données, Analytics & IA · Développement applicatif · Infrastructure, Systèmes & Réseaux · Bureautique & compétences générales · …</td>
     </tr>
     <tr>
       <td style="padding: 8px;">3e</td>
       <td style="padding: 8px;">Niveau</td>
-      <td style="padding: 8px;">Basique, Intermédiaire, Avancé</td>
+      <td style="padding: 8px;">Basique · Intermédiaire · Avancé</td>
     </tr>
     <tr>
       <td style="padding: 8px;">4e</td>
       <td style="padding: 8px;">Catégorie IA</td>
-      <td style="padding: 8px;">Machine Learning, IA générative...</td>
+      <td style="padding: 8px;">Machine Learning · IA générative · …</td>
     </tr>
   </tbody>
 </table>
 
 <br>
 
+## API
+
+L'API FastAPI expose un endpoint principal :
+
+```
+GET /analyze?desc_offre=<texte de l'offre>
+```
+
+Elle retourne une liste d'objets JSON, un par compétence extraite, avec l'ensemble des niveaux de classification. La documentation interactive est accessible sur `/docs`.
+
+Le backend utilise [`run_in_threadpool`](https://www.starlette.io/concurrency/) de Starlette pour ne pas bloquer la boucle d'événements FastAPI lors des appels synchrones au modèle spaCy et au LLM.
+
+<br>
+
 ## CI/CD
 
-Le projet utilise **GitHub Actions** pour :
+Le projet utilise **GitHub Actions** pour trois workflows automatisés :
 
+<table>
+  <thead>
+    <tr style="border-bottom: 2px solid #000;">
+      <th style="text-align: left; padding: 8px;">Workflow</th>
+      <th style="text-align: left; padding: 8px;">Déclencheur</th>
+      <th style="text-align: left; padding: 8px;">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 8px;"><code>deploy_pages.yml</code></td>
+      <td style="padding: 8px;">Push sur <code>main</code></td>
+      <td style="padding: 8px;">Build Quarto + déploiement GitHub Pages</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;"><code>docker_back.yml</code></td>
+      <td style="padding: 8px;">Push sur <code>main</code>, branches actives, tags <code>v*</code></td>
+      <td style="padding: 8px;">Build & push image Docker <strong>backend</strong> sur Docker Hub</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;"><code>docker_front.yml</code></td>
+      <td style="padding: 8px;">Push sur <code>main</code>, branches actives, tags <code>v*</code></td>
+      <td style="padding: 8px;">Build & push image Docker <strong>frontend</strong> sur Docker Hub</td>
+    </tr>
+  </tbody>
+</table>
 
+Les images Docker sont construites avec **Docker Buildx** (support multi-plateformes) et publiées sur Docker Hub. Les variables de configuration (URL LLM, chemin S3, nom de modèle) sont injectées comme `build-args` lors du build du backend.
 
 <br>
 
@@ -124,6 +183,11 @@ Le projet utilise **GitHub Actions** pour :
 
 L'application est déployée sur **SSP Cloud** :
 
-- Le frontend Streamlit tourne dans un conteneur Docker
-- L'API de classification tourne dans un conteneur séparé
-- ArgoCD ???
+- Le **frontend Streamlit** tourne dans un conteneur Docker exposé sur le port `8501`
+- L'**API FastAPI** tourne dans un conteneur séparé, démarré via `uvicorn` avec le script `app/run.sh`
+- Le **modèle spaCy** et les **données historiques** sont stockés sur un bucket S3 (MinIO SSPCloud) et téléchargés au démarrage du backend
+- La **clé API LLM** est injectée via un secret Kubernetes (`api-jeton`)
+
+```bash
+kubectl create secret generic api-jeton --from-literal=API_KEY='votre_clé_api'
+```
