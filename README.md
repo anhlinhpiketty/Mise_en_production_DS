@@ -31,14 +31,14 @@ Texte d'offre d'emploi
 ┌───────────────────────────────────────────────────────────────────┐
 │                    Pipeline de classification LLM                 │
 │                                                                   │
-│  Niveau 1 — Type : Soft Skill / Numérique / Non-numérique /      │
+│  Niveau 1 — Type : Soft Skill / Numérique / Non-numérique /       │
 │             Domaine-Secteur / Certification                       │
 │                                                                   │
 │  Si "Numérique" :                                                 │
-│    Niveau 2 — Thématique : Données & IA / Dev applicatif /       │
-│               Infrastructure / Bureautique / …                   │
-│    Niveau 3 — Niveau : Basique / Intermédiaire / Avancé          │
-│    Niveau 4 — Catégorie IA : Machine Learning / IA générative … │
+│    Niveau 2 — Thématique : Données & IA / Dev applicatif /        │
+│               Infrastructure / Bureautique / …                    │
+│    Niveau 3 — Niveau : Basique / Intermédiaire / Avancé           │
+│    Niveau 4 — Catégorie IA : Machine Learning / IA générative …   │
 └───────────────────────────────────────────────────────────────────┘
         │
         ▼
