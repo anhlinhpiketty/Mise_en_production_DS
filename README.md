@@ -261,7 +261,7 @@ Le frontend est exposé via un Ingress NGINX avec TLS :
 - [Application en ligne](https://jobless-website.lab.sspcloud.fr/)
 - [Site de documentation](https://anhlinhpiketty.github.io/Mise_en_production_DS/)
 - [Dépôt GitOps](https://github.com/arthurleroudier/Jobless_deployment)
-- [Téléchargemeent des données du S3 (modèle, prompts, historique de classification)](https://minio.lab.sspcloud.fr/colaslepoutre/Données%S3.zip)
+- [Téléchargemeent des données du S3 (modèle, prompts, historique de classification)](https://minio.lab.sspcloud.fr/colaslepoutre/DonnéesS3.zip)
 
 
 
