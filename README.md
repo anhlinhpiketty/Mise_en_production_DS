@@ -98,7 +98,7 @@ cd Mise_en_production_DS
 
 ### Variables d'environnement
 
-Créez un fichier `.env` à la racine :
+Créez un fichier `.env` à la racine ou utilisez les variables du repo github si setup CI/CD :
 
 ```env
 API_KEY=votre_clé_api_llm
@@ -107,6 +107,7 @@ MODEL_NAME=gpt-oss:120b
 S3_PATH=s3://votre-bucket/chemin
 AWS_S3_ENDPOINT=minio.lab.sspcloud.fr
 TEMPERATURE=0.0
+BACKEND_API_URL=https://jobless.lab.sspcloud.fr
 ```
 
 ---
@@ -145,6 +146,7 @@ docker build \
   --build-arg MODEL_NAME=$MODEL_NAME \
   --build-arg S3_PATH=$S3_PATH \
   --build-arg AWS_S3_ENDPOINT=$AWS_S3_ENDPOINT \
+  --build-args BACKEND_API_URL=$BACKEND_API_URL \
   -f app/Dockerfile -t jobless-back .
 
 docker run -e API_KEY=$API_KEY -p 8000:8000 jobless-back
@@ -176,7 +178,7 @@ Trois workflows GitHub Actions sont configurés :
 | `DOCKERHUB_USERNAME_BACK` | Nom d'utilisateur Docker Hub |
 | `DOCKERHUB_TOKEN_BACK` | Token Docker Hub |
 
-### Variables GitHub requises
+### Variables GitHub requises si CI/CD
 
 | Variable | Exemple |
 |---|---|
@@ -259,5 +261,7 @@ Le frontend est exposé via un Ingress NGINX avec TLS :
 - [Application en ligne](https://jobless-website.lab.sspcloud.fr/)
 - [Site de documentation](https://anhlinhpiketty.github.io/Mise_en_production_DS/)
 - [Dépôt GitOps](https://github.com/arthurleroudier/Jobless_deployment)
+- [Téléchargemeent des données du S3 (modèle, prompts, historique de classification)](https://minio.lab.sspcloud.fr/colaslepoutre/Données%S3.zip)
+
 
 
