@@ -11,9 +11,6 @@ st.set_page_config(
     layout="centered",
 )
 
-# # Timeout en secondes au-delà duquel on propose le parachute
-# # A modifier, j'ai été vraiment pas patiente
-# TIMEOUT_SECONDES = 5
 
 # STYLE ------------------------------------------------------------------------
 
@@ -195,86 +192,7 @@ def appeler_api(texte_offre: str):
     except Exception as e:
         st.error(f"Le serveur ne répond pas : {e}")
         return None
-         
-
-# # MOCK API (à remplacer par le vrai appel quand l'API sera prête) -----------------
-# # Ici on peut simuler plusieurs scénarios (dont la lenteur d'execution)
-# # Si c'est trop lent on utilise le modèle parachute (pas sûre de comment faire le pop up)
-
-
-# # Réponses fictives
-# COMPETENCES_MOCK = [
-#     {
-#         "label": "Python",
-#         "categorie": "Compétence numérique",
-#         "details": {"thematique": "Données, Analytics & IA", "niveau": "Avancé", "categorie_ia": "Machine Learning"}
-#     },
-#     {
-#         "label": "SQL",
-#         "categorie": "Compétence numérique",
-#         "details": {"thematique": "Données, Analytics & IA", "niveau": "Intermédiaire", "categorie_ia": None}
-#     },
-#     {
-#         "label": "Docker",
-#         "categorie": "Compétence numérique",
-#         "details": {"thematique": "Infrastructure, Systèmes & Réseaux", "niveau": "Basique", "categorie_ia": None}
-#     },
-#     {"label": "Communication",        "categorie": "Soft Skill",               "details": None},
-#     {"label": "Gestion de projet",    "categorie": "Soft Skill",               "details": None},
-#     {"label": "Rédaction de rapports","categorie": "Compétence non numérique", "details": None},
-#     {"label": "Finance de marché",    "categorie": "Domaine / Secteur",        "details": None},
-#     {"label": "Whatever diploma", "categorie": "Certification / Formation", "details": None},
-# ]
-
-# # Changer cette valeur pour tester les différents scénarios :
-# # "ok" : API répond normalement
-# # "lent" : API dépasse le timeout
-# # "indisponible" : LLMLab down
-# SCENARIO_MOCK = "lent"
-
-# # API principale où on utilise le "bon" LLM 
-# def mock_api_principale(texte_offre: str) -> dict:
-#     """
-#     Simule l'API principale du LLM.
-
-#     Pour l'instant : retourne une classification fictive.
-
-#     Pas sûre du format JSON sur lequel on se calquera mais en gros je fais :
-#     label = la compétence brute extraite du texte
-#     categorie = le résultat de la 1ère classification LLM
-#     details = les résultats des classifications suivantes (seulement si numérique)
-
-#     Je simule le fait que le modèle puisse prendre trop de temps aussi
- 
-#     À remplacer plus tard avec les réponses des API principales/de secours
-#     """
-#     if SCENARIO_MOCK == "ok":
-#         time.sleep(1) # On s'arrête pendant 1 secondes
-#         return {"competences": COMPETENCES_MOCK}
- 
-#     elif SCENARIO_MOCK == "lent":
-#         time.sleep(TIMEOUT_SECONDES + 5) # On s'arrête au delà du temps accepté
-#         return {"competences": COMPETENCES_MOCK}
- 
-#     elif SCENARIO_MOCK == "indisponible":
-#         raise ConnectionError("API principale indisponible")
- 
-# # API parachute
-# def mock_api_parachute(texte_offre: str) -> dict:
-#     """
-#     Simule le LLM de secours (plus rapide).
- 
-#     À remplacer plus tard par :
-#         response = requests.post(
-#             "http://<url-api-parachute>/analyze",
-#             json={"texte": texte_offre},
-#             timeout=TIMEOUT_SECONDES
-#         )
-#         return response.json()
-#     """
-#     time.sleep(1)
-#     return {"competences": COMPETENCES_MOCK}
-
+        
 
 # AFFICHAGE ---------------------------------------------------------------------
 
@@ -333,28 +251,11 @@ def render_resultats(competences: list):
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-# def render_bandeau(mode: str):
-    # """Affiche un bandeau d'avertissement selon le modèle utilisé."""
-    # if mode == "parachute_timeout":
-    #     st.markdown("""
-    #     <div class="bandeau-parachute">
-    #          <strong>Modèle de secours utilisé</strong> — L'API principale a mis trop de temps.
-    #     </div>
-    #     """, unsafe_allow_html=True)
-    # elif mode == "parachute_indispo":
-    #     st.markdown("""
-    #     <div class="bandeau-indispo">
-    #          <strong>Modèle de secours utilisé</strong> — L'API principale est indisponible.
-    #     </div>
-    #     """, unsafe_allow_html=True)
-
 def afficher_resultats(resultat: dict):
     """Affiche le bandeau + les compétences détectées."""
     competences = resultat
     total       = len(competences)
     st.markdown("<hr class='section-sep'>", unsafe_allow_html=True)
-    # if mode != "ok":
-    #     render_bandeau(mode)
     st.markdown(f"### {total} compétence{'s' if total > 1 else ''} détectée{'s' if total > 1 else ''}")
     render_resultats(competences)
 
@@ -431,83 +332,7 @@ if analyser:
             resultat_clean = nettoyer_competences(resultat)
             st.session_state["resultat"] = resultat_clean 
 
-# AFFICHAGE ----------------------------------------------------------------------
+# AFFICHAGE DES RESULTATS  ------------------------------------------------------
 
 if "resultat" in st.session_state and st.session_state["resultat"] is not None:
     afficher_resultats(st.session_state["resultat"])
-
-
-# On utilise st.session_state pour mémoriser l'état entre deux exécutions du script.
-# Streamlit réexécute tout le fichier à chaque interaction (clic, saisie...),
-# donc sans session_state, on perdrait l'information d'un tour à l'autre.
-#
-# États possibles dans session_state :
-#   "attente_choix" (bool) : True quand on attend que l'utilisateur choisisse
-#   "offre_en_cours" (str) : l'offre mémorisée pendant qu'on attend le choix
-#   "resultat" (dict)      :  résultat final à afficher
-#   "mode" (str)           : "ok" | "parachute_timeout" | "parachute_indispo"
-
-# # Initialisation des variables de session si elles n'existent pas encore
-# if "attente_choix" not in st.session_state:
-#     st.session_state["attente_choix"] = False
-# if "resultat" not in st.session_state:
-#     st.session_state["resultat"] = None
-# if "mode" not in st.session_state:
-#     st.session_state["mode"] = "ok"
- 
-# # Quand on clique sur "Analyser"
-# if analyser:
-#     if not offre.strip():
-#         st.warning("Merci de coller une offre d'emploi avant d'analyser.")
-#     else:
-#         # On remet l'état à zéro pour une nouvelle analyse
-#         st.session_state["resultat"]     = None
-#         st.session_state["attente_choix"] = False
-#         st.session_state["mode"]         = "ok"
- 
-#         try:
-#             with st.spinner("Analyse avec le modèle principal..."):
-#                 debut    = time.time()
-#                 resultat = mock_api_principale(offre)
-#                 duree    = time.time() - debut
- 
-#             if duree > TIMEOUT_SECONDES:
-#                 # Trop lent : on mémorise l'offre et on passe en mode "attente choix"
-#                 st.session_state["attente_choix"]  = True
-#                 st.session_state["offre_en_cours"] = offre
-#             else:
-#                 # OK : on mémorise le résultat directement
-#                 st.session_state["resultat"] = resultat
-#                 st.session_state["mode"]     = "ok"
- 
-#         except ConnectionError:
-#             # Indisponible donc parachute automatique
-#             st.toast("Indisponible : passage au modèle de secours")
-#             with st.spinner("Basculement sur le modèle de secours..."):
-#                 st.session_state["resultat"] = mock_api_parachute(offre)
-#                 st.session_state["mode"]     = "parachute_indispo"
- 
-# # Pop-up de choix si on est en attente 
-# if st.session_state["attente_choix"]:
-#     st.warning(f"L'analyse prend plus de {TIMEOUT_SECONDES} secondes.")
-#     col_a, col_b = st.columns([1, 1])
-#     _, col_a, col_b, _ = st.columns([1, 1, 1, 1])
-#     spinner_placeholder = st.empty() 
-
-#     with col_a:
-#         if st.button("Continuer à attendre"):
-#             with spinner_placeholder, st.spinner("En attente de l'API principale..."):
-#                 st.session_state["resultat"]      = mock_api_principale(st.session_state["offre_en_cours"])
-#                 st.session_state["mode"]          = "ok"
-#                 st.session_state["attente_choix"] = False
- 
-#     with col_b:
-#         if st.button("Utiliser un modèle de secours"):
-#             with spinner_placeholder, st.spinner("Basculement sur le modèle de secours..."):
-#                 st.session_state["resultat"]      = mock_api_parachute(st.session_state["offre_en_cours"])
-#                 st.session_state["mode"]          = "parachute_timeout"
-#                 st.session_state["attente_choix"] = False
- 
-# # Affichage du résultat final 
-# if st.session_state["resultat"]:
-#     afficher_resultats(st.session_state["resultat"], st.session_state["mode"])
