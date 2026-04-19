@@ -259,6 +259,5 @@ Le frontend est exposé via un Ingress NGINX avec TLS :
 - [Application en ligne](https://jobless-website.lab.sspcloud.fr/)
 - [Site de documentation](https://anhlinhpiketty.github.io/Mise_en_production_DS/)
 - [Dépôt GitOps](https://github.com/arthurleroudier/Jobless_deployment)
-- [Free-LLM (O-LLM)](https://github.com/O-LLM/Free-LLM)
 
 
